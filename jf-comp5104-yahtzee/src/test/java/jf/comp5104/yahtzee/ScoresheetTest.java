@@ -10,7 +10,7 @@ public class ScoresheetTest {
 	public void test() {
 		fail("Not yet implemented");
 		
-		// need to figure out how to represent a scoresheet.
+		// need to figure out how to represent a Scoresheet.
 	}
 
 }

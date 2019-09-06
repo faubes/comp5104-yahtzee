@@ -8,4 +8,14 @@
 
 Assignment 1 for COMP5104 Fall 2019. Focus on Test Driven Development, Maven build tool, Object-oriented design.</description>
   <url>github.com/faubes/comp5104-yahtzee</url>
+
+<dependencies>
+  <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+  <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.5.0-RC2</version>
+      <scope>test</scope>
+  </dependency>
+</dependencies>
 </project>
