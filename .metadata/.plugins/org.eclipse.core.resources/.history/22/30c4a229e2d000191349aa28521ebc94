@@ -4,8 +4,5 @@
   <artifactId>jf-comp5104-yahtzee</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>CLI Yahtzee </name>
-  <description>Command Line Yahtzee for 3 players over TCP/IP.
-
-Assignment 1 for COMP5104 Fall 2019. Focus on Test Driven Development, Maven build tool, Object-oriented design.</description>
-  <url>github.com/faubes/comp5104-yahtzee</url>
+  <description>Command Line Yahtzee for 3 players over TCP/IP.</description>
 </project>
