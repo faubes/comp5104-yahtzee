@@ -6,8 +6,11 @@
   <name>CLI Yahtzee </name>
   <description>Command Line Yahtzee for 3 players over TCP/IP.
 
-Assignment 1 for COMP5104 Fall 2019. Focus on Test Driven Development, Maven build tool, Object-oriented design.</description>
+Assignment 1 for COMP5104 Fall 2019. 
+
+Focus on Test Driven Development, Maven build &amp; dependency mgt, Object-oriented design.</description>
   <url>github.com/faubes/comp5104-yahtzee</url>
+<<<<<<< HEAD
 
 <dependencies>
   <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
@@ -19,3 +22,16 @@ Assignment 1 for COMP5104 Fall 2019. Focus on Test Driven Development, Maven bui
   </dependency>
 </dependencies>
 </project>
+=======
+  
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/junit/junit -->
+	<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>  
+  </dependency>
+  </dependencies>
+</project>
+>>>>>>> tmp
