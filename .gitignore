@@ -11,7 +11,8 @@ buildNumber.properties
 # avoid adding eclipse stuff
 .metadata/
 .settings/
-.classpath/
+.classpath
+.project
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
