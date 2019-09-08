@@ -13,6 +13,6 @@ buildNumber.properties
 .settings/
 .classpath
 .project
-
+.recommenders/
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
