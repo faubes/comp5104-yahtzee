@@ -15,14 +15,22 @@ public class CLITest {
       PrintStream console = System.out;
       try {
          System.setOut(new PrintStream(bytes));
-         Yahtzee.main(null);
+         Yahtzee.main(new String[] {});
       } finally {
          System.setOut(console);
       }
-      assertEquals(String.format(
-            "too few arguments%n" +
-            "Client: java -jar Yahtzee -c remote port%n" +
-            "Server: java -jar Yahtzee -s port%n", EOL, EOL, EOL),
+      String helpMessage = String.format(
+    		  "%n" +
+    		  "====%n" +
+    		  "HELP%n" +
+    		  "====%n" +
+    		  "usage: java -jar yahtzee.jar [-s] [host] [port]%n" +
+    		  "Yahtzee%n" +
+    		  " -h,--help     command line help%n" +
+    		  " -s,--server   start server%n" +
+    		  "Now with Command Line Interface and Multiplayer!%n",
+    		  EOL, EOL, EOL, EOL, EOL, EOL, EOL, EOL, EOL);
+      assertEquals(helpMessage,
             bytes.toString());
    }
 }

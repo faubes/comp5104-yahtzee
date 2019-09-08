@@ -1,6 +1,7 @@
 package jf.comp5104.yahtzee;
 
 import java.net.*;
+import java.util.List;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 
 public class Yahtzee {
+
+	private static final String DEFAULT_PORT = "3333";
+	private static final String EOL = System.getProperty("line.separator");
 
 	static class YahtzeeServer {
 		int portNumber;
@@ -28,7 +32,7 @@ public class Yahtzee {
 			// add logging eventually?
 
 			System.out.println("Start Server on port " + port);
-			
+
 			try (ServerSocket serverSocket = new ServerSocket(port);
 					Socket clientSocket = serverSocket.accept();
 					PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -57,7 +61,7 @@ public class Yahtzee {
 		int portNumber;
 		String hostName;
 
-		YahtzeeClient(int port, String host) {
+		YahtzeeClient(String host, int port) {
 			portNumber = port;
 			hostName = host;
 		}
@@ -73,7 +77,7 @@ public class Yahtzee {
 				String userInput;
 				while ((fromServer = in.readLine()) != null) {
 					System.out.println("Server: " + fromServer);
-					
+
 					if ("Bye".equalsIgnoreCase(fromServer)) {
 						break;
 					}
@@ -95,41 +99,75 @@ public class Yahtzee {
 		}
 	}
 
-	private static final String DEFAULT_PORT = "3333";
+	// Example command line stuff from
+	// https://dzone.com/articles/java-command-line-interfaces-part-1-apache-commons
+
+	private static void printHelp(final Options options) {
+		final HelpFormatter formatter = new HelpFormatter();
+		final String syntax = "java -jar yahtzee.jar [-s] [host] [port]";
+		final String usageHeader = "Yahtzee";
+		final String usageFooter = "Now with Command Line Interface and Multiplayer!";
+		System.out.println();
+		System.out.println("====");
+		System.out.println("HELP");
+		System.out.println("====");
+		formatter.printHelp(syntax, usageHeader, options, usageFooter);
+	}
 
 	public static void main(String[] args) {
-		
+
 		// create options for command line
 		Options options = new Options();
 
-		options.addOption("s", "server", false, "start a server");
-		options.addOption("c", "client", false, "connect to server (default)");
-		options.addOption("h", "hostname", true, "server address (default localhost)");
-		
+		options.addOption("s", "server", false, "start server");
+		options.addOption("h", "help", false, "command line help");
 		// https://www.programcreek.com/java-api-examples/org.apache.commons.cli.OptionBuilder
-		
-		@SuppressWarnings("static-access")
-		Option portOption = Option.builder("p").withArgName("port number").hasArg()
-				.withDescription("port number of the Web server. Defaults to " + DEFAULT_PORT)
-				.create("port");
 
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
-			if (cmd.hasOption("s")) {
-				YahtzeeServer server = new YahtzeeServer(Integer.parseInt(cmd.getOptionValue("s")));
-				server.start();
-			}
-			if (cmd.hasOption("c") && cmd.hasOption("h")) {
 
-				YahtzeeClient client = new YahtzeeClient(Integer.parseInt(cmd.getOptionValue("c")),
-						cmd.getOptionValue("h"));
+			List<String> argList = cmd.getArgList();
+			// System.out.println("Args: " + argList);
+			
+			int port = Integer.parseInt(DEFAULT_PORT);
+			String hostname = "localhost";
+
+			if (cmd.hasOption("h")) {
+				printHelp(options);
+				return;
+			}
+			
+			if (cmd.hasOption("s")) {
+				if (argList.size() > 1) {
+					printHelp(options);
+					return;
+				}
+				if (!argList.isEmpty()) {
+					port = Integer.parseInt(argList.iterator().next());
+				}
+				YahtzeeServer server = new YahtzeeServer(port);
+				server.start();
+			} else { // run as client by default
+				if (argList.isEmpty() || argList.size() > 2) {
+					printHelp(options);
+					return;
+				}
+				if (argList.size() == 1) {
+					hostname = argList.iterator().next();
+				}
+				if (argList.size() == 2) {
+					hostname = argList.iterator().next();
+					port = Integer.parseInt(argList.iterator().next());
+				}
+				YahtzeeClient client = new YahtzeeClient(hostname, port);
 				client.connect();
 			}
+
 		} catch (ParseException e) {
 			System.out.println(e.toString());
 			System.err.println("Could not parse command line " + args);
 			return;
-		}
+		}	
 	}
 }
