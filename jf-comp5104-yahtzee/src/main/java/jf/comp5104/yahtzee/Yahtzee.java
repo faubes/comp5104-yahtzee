@@ -40,10 +40,12 @@ public class Yahtzee {
 
 				System.out.println("Created server socket on port " + port);
 
+				out.println("Welcome to CLI Yahtzee");
+				
 				String inputLine, outputLine;
-
+				
 				while ((inputLine = in.readLine()) != null) {
-					System.out.println(inputLine);
+					out.println(inputLine);
 					if ("exit".equalsIgnoreCase(inputLine)) {
 						out.println("Bye");
 						break;
