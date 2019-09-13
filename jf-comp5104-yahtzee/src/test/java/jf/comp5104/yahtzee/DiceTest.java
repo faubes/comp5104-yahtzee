@@ -12,7 +12,7 @@ public class DiceTest {
 	@Test
 	public void testDiceConstructorWithoutParameters() {
 		Dice d = new Dice();
-		assertTrue("New dice automatically rolled", d.getValue >= 1 && d.getValue() <= 6);
+		assertTrue("New dice automatically rolled", d.getValue() >= 1 && d.getValue() <= 6);
 		// next step: check that a roll returns an integer in [1,6]
 	}
 	
@@ -43,7 +43,7 @@ public class DiceTest {
 	public void testRoll() {
 		Dice d = new Dice();
 		d.roll();
-		assertTrue("Dice has non-zero value", d.getValue >= 1 && d.getValue() <= 6);
+		assertTrue("Dice has non-zero value", d.getValue() >= 1 && d.getValue() <= 6);
 	}
 	
 	
