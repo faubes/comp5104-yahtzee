@@ -17,13 +17,25 @@ public class Roll {
 		}
 	}
 	
-	public Roll(int[] is) throws IllegalStateException {
+	public Roll(int ... is) throws IllegalStateException {
 		if (is.length > 5) throw new IllegalStateException("A roll has 5 dice.");
 		for (int i : is) {
 			l.add(new Die(i));
 		}
 	}
 
+	public void reroll(int ... is) throws IllegalStateException {
+		if (is.length > 5) throw new IllegalStateException("Cannot reroll more than 5 dice.");
+		for (int i : is) {
+			if (i < 1 || i > 6) throw new IllegalStateException("Invalid index for reroll");
+			l.get(i).roll();
+		}
+	}
+	
+	public int sum() {
+		return l.stream().mapToInt(Die::getValue).reduce(0, Integer::sum);
+	}
+	
 	public int size() {
 		return l.size();
 	}
