@@ -16,7 +16,8 @@ public class Dice {
 	}
 
 	public Dice(int n) throws IllegalStateException {
-		if (n < 1 || n > 6) throw new IllegalStateException("Assuming D6 are used. Cannot roll a " + n);
+		if (n < 1 || n > 6)
+			throw new IllegalStateException("Assuming D6 are used. Cannot roll a " + n);
 		val = n;
 	}
 
