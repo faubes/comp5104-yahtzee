@@ -8,11 +8,13 @@ public class RollTest {
 
 	@Test
 	public void testRollConstructorWithoutParameters() {
+		@SuppressWarnings("unused")
 		Roll r = new Roll();
 	}
 
 	@Test
 	public void testRollConstructorWithSpecifiedValues() {
+		@SuppressWarnings("unused")
 		Roll r = new Roll(new int[]{1,1,1,1,1});
 	}
 	

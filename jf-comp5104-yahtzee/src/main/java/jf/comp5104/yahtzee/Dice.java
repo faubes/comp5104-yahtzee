@@ -6,10 +6,9 @@ public class Dice {
 
 	private int val;
 	private static Random rng = new Random();
-	private final String topAndBottom = "-----";
-	private final String leftSide = "| ";
-	private final String rightSide = " |";
-	private static final String EOL = System.getProperty("line.separator");
+	static final String topAndBottom = "-----";
+	static final String leftSide = "| ";
+	static final String rightSide = " |";
 
 	public Dice() {
 		this.roll();
@@ -32,14 +31,14 @@ public class Dice {
 
 	public String toString() {
 		StringBuilder sbuilder = new StringBuilder();
-		sbuilder.append(topAndBottom);
-		sbuilder.append(EOL);
-		sbuilder.append(leftSide);
+		sbuilder.append(Dice.topAndBottom);
+		sbuilder.append(Yahtzee.EOL);
+		sbuilder.append(Dice.leftSide);
 		sbuilder.append(getValue());
-		sbuilder.append(rightSide);
-		sbuilder.append(EOL);
-		sbuilder.append(topAndBottom);
-		sbuilder.append(EOL);
+		sbuilder.append(Dice.rightSide);
+		sbuilder.append(Yahtzee.EOL);
+		sbuilder.append(Dice.topAndBottom);
+		sbuilder.append(Yahtzee.EOL);
 		return sbuilder.toString();
 	}
 }

@@ -2,19 +2,19 @@ package jf.comp5104.yahtzee;
 
 import jf.comp5104.yahtzee.net.*;
 
-import java.net.*;
 import java.util.List;
 
 import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.*;
 
 public class Yahtzee {
 
+	// String constants used throughout application
+	static final String EOL = System.getProperty("line.separator");
+	static final String TAB = "\t";
+	
 	// Example command line stuff from
 	// https://dzone.com/articles/java-command-line-interfaces-part-1-apache-commons
-
 	private static void printHelp(final Options options) {
 		final HelpFormatter formatter = new HelpFormatter();
 		final String syntax = "java -jar yahtzee.jar [-s] [host] [port]";
