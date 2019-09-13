@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 
-
 public class Yahtzee {
 
 	// Example command line stuff from
@@ -42,8 +41,10 @@ public class Yahtzee {
 			CommandLine cmd = parser.parse(options, args);
 
 			List<String> argList = cmd.getArgList();
-			// System.out.println("Args: " + argList);
-			
+			for (String a : argList) {
+				System.out.println(a);
+			}
+
 			int port = Integer.parseInt(YahtzeeServer.DEFAULT_PORT);
 			String hostname = YahtzeeServer.DEFAULT_HOST;
 
@@ -51,7 +52,7 @@ public class Yahtzee {
 				printHelp(options);
 				return;
 			}
-			
+
 			if (cmd.hasOption("s")) {
 				if (argList.size() > 1) {
 					printHelp(options);
@@ -60,8 +61,8 @@ public class Yahtzee {
 				if (!argList.isEmpty()) {
 					port = Integer.parseInt(argList.iterator().next());
 				}
-				YahtzeeServer server = new YahtzeeServer(port);
-				server.start();
+				YahtzeeServer server = new YahtzeeServer(port, 10);
+				server.run();
 			} else { // run as client by default
 				if (argList.isEmpty() || argList.size() > 2) {
 					printHelp(options);
@@ -71,17 +72,29 @@ public class Yahtzee {
 					hostname = argList.iterator().next();
 				}
 				if (argList.size() == 2) {
-					hostname = argList.iterator().next();
-					port = Integer.parseInt(argList.iterator().next());
+					hostname = argList.get(0);
+					try {
+						port = Integer.parseInt(argList.get(1));
+					} catch (NumberFormatException e) {
+						printHelp(options);
+						return;
+					}
 				}
 				YahtzeeClient client = new YahtzeeClient(hostname, port);
 				client.connect();
 			}
-
-		} catch (ParseException e) {
+			
+		} 
+		// Catch network errors from server/client creations
+		catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		// Error with command line parsing
+		catch (ParseException e) {
 			System.out.println(e.toString());
 			System.err.println("Could not parse command line " + args);
 			return;
-		}	
+		}
 	}
 }

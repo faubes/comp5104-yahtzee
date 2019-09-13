@@ -9,8 +9,15 @@ public class Player {
 	PrintWriter out;
 	BufferedReader in;
 
+	
 	public Player(String username) {
 		this.username = username;
+	
+		/*
+		 * Socket clientSocket = serverSocket.accept(); // need to add thread here
+						PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+						BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		 */
 	}
 
 	public String getName() {
