@@ -1,6 +1,6 @@
 package jf.comp5104.yahtzee;
 
-import jf.comp5104.yahtzee.Dice;
+import jf.comp5104.yahtzee.Die;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class DiceTest {
 
 	@Test
 	public void testDiceConstructorWithoutParameters() {
-		Dice d = new Dice();
+		Die d = new Die();
 		assertTrue("New dice automatically rolled", d.getValue() >= 1 && d.getValue() <= 6);
 		// next step: check that a roll returns an integer in [1,6]
 	}
@@ -19,20 +19,20 @@ public class DiceTest {
 	// want to be able to construct specific dice for testing
 	@Test
 	public void testDiceConstructorWithSpecifiedValue() {
-		Dice d = new Dice(5);
+		Die d = new Die(5);
 		assertEquals("Dice has value 5", d.getValue(), 5);
 	}
 
 	// shouldn't create dice in bad state
 	@Test(expected = IllegalStateException.class)
 	public void testDiceConstructorWithBadValue() {
-		Dice d = new Dice(10);
+		Die d = new Die(10);
 	}
 	
 	
 	@Test
 	public void testToString() {
-		Dice d = new Dice(1);
+		Die d = new Die(1);
 		String expected = "-----\n" +
 						  "| 1 |\n" +
 						  "-----\n";
@@ -41,7 +41,7 @@ public class DiceTest {
 
 	@Test
 	public void testRoll() {
-		Dice d = new Dice();
+		Die d = new Die();
 		d.roll();
 		assertTrue("Dice has non-zero value", d.getValue() >= 1 && d.getValue() <= 6);
 	}

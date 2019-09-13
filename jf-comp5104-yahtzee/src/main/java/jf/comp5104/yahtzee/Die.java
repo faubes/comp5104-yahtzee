@@ -2,7 +2,7 @@ package jf.comp5104.yahtzee;
 
 import java.util.Random;
 
-public class Dice {
+public class Die {
 
 	private int val;
 	private static Random rng = new Random();
@@ -10,11 +10,11 @@ public class Dice {
 	static final String leftSide = "| ";
 	static final String rightSide = " |";
 
-	public Dice() {
+	public Die() {
 		this.roll();
 	}
 
-	public Dice(int n) throws IllegalStateException {
+	public Die(int n) throws IllegalStateException {
 		if (n < 1 || n > 6)
 			throw new IllegalStateException("Assuming D6 are used. Cannot roll a " + n);
 		val = n;
@@ -31,13 +31,13 @@ public class Dice {
 
 	public String toString() {
 		StringBuilder sbuilder = new StringBuilder();
-		sbuilder.append(Dice.topAndBottom);
+		sbuilder.append(Die.topAndBottom);
 		sbuilder.append(Yahtzee.EOL);
-		sbuilder.append(Dice.leftSide);
+		sbuilder.append(Die.leftSide);
 		sbuilder.append(getValue());
-		sbuilder.append(Dice.rightSide);
+		sbuilder.append(Die.rightSide);
 		sbuilder.append(Yahtzee.EOL);
-		sbuilder.append(Dice.topAndBottom);
+		sbuilder.append(Die.topAndBottom);
 		sbuilder.append(Yahtzee.EOL);
 		return sbuilder.toString();
 	}
