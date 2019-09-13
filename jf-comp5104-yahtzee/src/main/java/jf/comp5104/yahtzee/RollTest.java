@@ -34,6 +34,36 @@ public class RollTest {
 	}
 	
 	@Test
+	public void testRollHasSum() {
+		Roll r = new Roll(new int[]{1,2,3,4,5});
+		assertEquals("Sums to 15", r.sum(), 15);
+	}
+	
+	@Test
+	public void testRollCanBeRerolledByIndex() {
+		Roll r = new Roll();
+		r.reroll(1);
+	}
+	
+	@Test
+	public void testRollCanBeRerolledByIndexSet() {
+		Roll r = new Roll();
+		r.reroll(new int[]{1, 2});
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testCannotRerollMoreThanAll() {
+		Roll r = new Roll();
+		r.reroll(new int[]{1,2,3,4,5,6});
+	}
+	
+	@Test(expected = IllegalStateException.class) 
+	public void testCannotRerollWithBadIndex() {
+		Roll r = new Roll();
+		r.reroll(8); // there are only 6 dice
+	}
+	
+	@Test
 	public void testRollContains() {
 		Roll r = new Roll(new int[]{1,2,3,4,5});
 		assertTrue("Does have a 1 ", r.contains(1));
