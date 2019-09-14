@@ -47,14 +47,14 @@ public class ScoresheetTest {
 		s.score(r, 1);
 		//Rolled 5 ones, scored them as twos
 		assertEquals("got 0 points in that category", s.getScore(2), 0);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal2(), 0);
+		assertEquals("Total of upper sections: 5", s.getUpperTotal1(), 5);
+		assertEquals("Total of upper sections: 5", s.getUpperTotal2(), 5);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
-		assertEquals("Total:", s.getTotal(), 0);
+		assertEquals("Total:", s.getTotal(), 5);
 	}
 
 	// restricted scoring to valid categories 1-13
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IndexOutOfBoundsException.class)
 	public void testInvalidScore() {
 		Roll r = new Roll(1, 1,1,1,1);
 		Scoresheet s = new Scoresheet();
@@ -68,10 +68,10 @@ public class ScoresheetTest {
 		s.score(r, 13);
 		//Rolled 5 ones, scored them as Yahtzee, 
 		assertEquals("got 50 points in that category", s.getScore(13), 50);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
-		assertEquals("Total:", s.getTotal(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
+		assertEquals("Total:", s.getTotal(), 50);
 	}
 
 }

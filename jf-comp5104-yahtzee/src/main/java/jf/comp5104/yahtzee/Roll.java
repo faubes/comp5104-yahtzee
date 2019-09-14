@@ -149,10 +149,21 @@ public class Roll {
 		return countStraight() >= 3;
 	}
 
-	public boolean hasHasLargeStraight() {
+	public boolean hasLargeStraight() {
 		return countStraight() == 4;
 	}
 
+	public boolean has3OfAKind() {
+		return countMaxMultiple() >= 3;
+	}
+	
+	public boolean has4OfAKind() {
+		return countMaxMultiple() >= 4;
+	}
+	
+	private int countMaxMultiple() {
+		return frequencyMap.entrySet().stream().mapToInt((me) -> me.getValue()).max().orElse(0);
+	}
 	public boolean hasYahtzee() {
 		return frequencyMap.size() == 1;
 	}

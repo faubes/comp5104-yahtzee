@@ -107,9 +107,9 @@ public class RollTest {
 	@Test
 	public void testHasFullStraight1() {
 		Roll r = new Roll(3, 2, 5, 1, 4);
-		assertTrue("Has a full straight", r.hasHasLargeStraight());
+		assertTrue("Has a full straight", r.hasLargeStraight());
 		r.set(5, 1); // set dice 5 to 3
-		assertFalse("Does not have full straight", r.hasHasLargeStraight());
+		assertFalse("Does not have full straight", r.hasLargeStraight());
 	}
 	
 	@Test
