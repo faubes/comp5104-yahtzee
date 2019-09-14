@@ -105,10 +105,23 @@ public class RollTest {
 	}
 	
 	@Test
-	public void testHasFullStraight() {
+	public void testHasFullStraight1() {
 		Roll r = new Roll(3, 2, 5, 1, 4);
 		assertTrue("Has a full straight", r.hasHasFullStraight());
 		r.set(5, 1); // set dice 5 to 3
 		assertFalse("Does not have full straight", r.hasHasFullStraight());
+	}
+	
+	@Test
+	public void testHasYahtzee() {
+		Roll r = new Roll(1,1,1,1,1);
+		assertTrue("Has Yahtzee", r.hasYahtzee());
+		r.set(1, 2);
+		assertFalse("Has Yahtzee", r.hasYahtzee());
+		r.set(6,6,6,6,6);
+		assertTrue("Has Yahtzee", r.hasYahtzee());
+		r.set(5,5);
+		assertFalse("Has Yahtzee", r.hasYahtzee());
+		
 	}
 }

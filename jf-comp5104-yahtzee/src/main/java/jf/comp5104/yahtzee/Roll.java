@@ -1,11 +1,13 @@
 package jf.comp5104.yahtzee;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import jf.comp5104.yahtzee.Die;
 
@@ -71,7 +73,14 @@ public class Roll {
 		return diceList.size();
 	}
 
-
+	public boolean equals(Roll or) {
+		List one = new ArrayList<Die>(or.diceList);
+		List two = new ArrayList<Die>(diceList);
+		Collections.sort(one);
+		Collections.sort(two);
+		return one.equals(two);	
+	}
+	
 	// roll contains i copies of j
 	public boolean hasMultiple(int i, int j) {
 		computeFrequency();
@@ -143,4 +152,16 @@ public class Roll {
 		return countStraight() == 4;
 	}
 
+	public boolean hasYahtzee() {
+		return frequencyMap.size() == 1;
+	}
+
+	public void set(int... is) throws IllegalStateException {
+		if (is.length != 5) throw new IllegalStateException("Ambiguous call to Roll.set(int[]) : need 5 ints");
+		diceList.clear();
+		for (int i : is) {
+			diceList.add(new Die(i));
+		}
+		computeFrequency();
+	}
 }
