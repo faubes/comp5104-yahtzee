@@ -41,4 +41,9 @@ public class Die {
 		sbuilder.append(Yahtzee.EOL);
 		return sbuilder.toString();
 	}
+
+	// for testing only change to package visibility?
+	void set(int j) {
+		val = j;
+	}
 }

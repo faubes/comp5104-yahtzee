@@ -27,10 +27,21 @@ public class RollTest {
 	@Test
 	public void testRollHasToString() {
 		Roll r = new Roll(new int[]{1,1,1,1,1});
-		assertEquals("String representation", r.toString(),
-				"-----\t-----\t-----\t-----\t-----\t\n"+
-				"| 1 |\t| 1 |\t| 1 |\t| 1 |\t| 1 |\t\n"+
-				"-----\t-----\t-----\t-----\t-----\t\n");
+		String testline1 = "-----\t-----\t-----\t-----\t-----\t";
+		String testline2 = "| 1 |\t| 1 |\t| 1 |\t| 1 |\t| 1 |\t";
+		String testline3 = "-----\t-----\t-----\t-----\t-----\t";
+		// needed to test: apparently \n is not equal to System.getProperty("line.separator");
+		//System.out.println("TEST:");
+		//System.out.println(testline1);
+		//System.out.println(testline2);
+		//System.out.println(testline3);
+		StringBuilder sb = new StringBuilder(testline1);
+		sb.append(Yahtzee.EOL);
+		sb.append(testline2);
+		sb.append(Yahtzee.EOL);
+		sb.append(testline3);
+		sb.append(Yahtzee.EOL);
+		assertEquals("String representation", r.toString(), sb.toString());
 	}
 	
 	@Test
@@ -88,9 +99,9 @@ public class RollTest {
 	@Test
 	public void testHasSmallStraight() {
 		Roll r = new Roll(1, 2, 6, 3, 4);
-		assertTrue("Has a small straight", r.hasHasSmallStraight());
+		assertTrue("Has a small straight", r.hasSmallStraight());
 		r.set(5, 1); // set dice 5 to 3
-		assertFalse("Does not have full house", r.hasHasSmallStraight());
+		assertFalse("Does not have full house", r.hasSmallStraight());
 	}
 	
 	@Test
