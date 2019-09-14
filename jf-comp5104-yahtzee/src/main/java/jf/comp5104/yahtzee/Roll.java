@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
-
 import jf.comp5104.yahtzee.Die;
 
 // A roll is a collection of 5 dice
