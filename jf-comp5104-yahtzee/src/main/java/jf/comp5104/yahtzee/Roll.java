@@ -78,9 +78,9 @@ public class Roll {
 		List two = new ArrayList<Die>(diceList);
 		Collections.sort(one);
 		Collections.sort(two);
-		return one.equals(two);	
+		return one.equals(two);
 	}
-	
+
 	// roll contains i copies of j
 	public boolean hasMultiple(int i, int j) {
 		computeFrequency();
@@ -116,31 +116,34 @@ public class Roll {
 		sbuilder3.append(Yahtzee.EOL);
 		sbuilder1.append(sbuilder2.toString());
 		sbuilder1.append(sbuilder3.toString());
-		System.out.println("toString()");
-		System.out.println(sbuilder1.toString());
+		// Debug for toString() test.
+		// System.out.println("toString()");
+		// System.out.println(sbuilder1.toString());
 		return sbuilder1.toString();
 	}
 
 	private int countStraight() {
 		// first sort dice
 		Iterator<Integer> sortedIterator = diceList.stream().mapToInt(Die::getValue).sorted().iterator();
+;
 		// then count successors
 		int countStraight = 0;
 		int i = sortedIterator.next();
 		int j;
-		// needed to debug off by one error: 
-		// at end of while, countStraight == 4 means 4 successive cards -> full straight
-		//System.out.println("Counting Straight");
-		//System.out.println(i);
+		// needed to debug off by one error:
+		// at end of while, countStraight == 4 means 4 successive cards -> full
+		// straight
+		// System.out.println("Counting Straight");
+		// System.out.println(i);
 		while (sortedIterator.hasNext()) {
 			j = sortedIterator.next();
-			//System.out.println(j);
+			// System.out.println(j);
 			if (i + 1 == j) {
 				countStraight++;
 			}
 			i = j;
 		}
-		//System.out.println("Count: " + countStraight);
+		// System.out.println("Count: " + countStraight);
 		return countStraight;
 	}
 
@@ -157,7 +160,8 @@ public class Roll {
 	}
 
 	public void set(int... is) throws IllegalStateException {
-		if (is.length != 5) throw new IllegalStateException("Ambiguous call to Roll.set(int[]) : need 5 ints");
+		if (is.length != 5)
+			throw new IllegalStateException("Ambiguous call to Roll.set(int[]) : need 5 ints");
 		diceList.clear();
 		for (int i : is) {
 			diceList.add(new Die(i));

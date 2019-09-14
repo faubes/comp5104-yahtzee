@@ -2,7 +2,7 @@ package jf.comp5104.yahtzee;
 
 import java.util.Random;
 
-public class Die {
+public class Die implements Comparable<Die> {
 
 	private int val;
 	private static Random rng = new Random();
@@ -45,5 +45,9 @@ public class Die {
 	// for testing only change to package visibility?
 	void set(int j) {
 		val = j;
+	}
+
+	public int compareTo(Die d) {
+		return Integer.compare(getValue(), d.getValue());
 	}
 }
