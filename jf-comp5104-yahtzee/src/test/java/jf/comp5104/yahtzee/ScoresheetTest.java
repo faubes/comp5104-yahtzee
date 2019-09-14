@@ -47,8 +47,8 @@ public class ScoresheetTest {
 		s.score(r, 1);
 		//Rolled 5 ones, scored them as twos
 		assertEquals("got 0 points in that category", s.getScore(2), 0);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal1(), 5);
-		assertEquals("Total of upper sections: 5", s.getUpperTotal2(), 5);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
 		assertEquals("Total:", s.getTotal(), 5);
 	}
@@ -72,6 +72,61 @@ public class ScoresheetTest {
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
 		assertEquals("Total:", s.getTotal(), 50);
+	}
+
+	@Test
+	public void testMultipleYahtzees() {
+		Roll r = new Roll(1, 1, 1, 1, 1);
+		Scoresheet s = new Scoresheet();
+		s.score(r, 13);
+		//Rolled 5 ones, scored them as Yahtzee, 
+		assertEquals("got 50 points in that category", s.getScore(13), 50);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
+		assertEquals("Total:", s.getTotal(), 50);
+		s.score(r, 13);
+		//Rolled 5 ones, scored them as Yahtzee, 
+		assertEquals("got 50 points in that category", s.getScore(13), 50);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 150);
+		assertEquals("Total:", s.getTotal(), 150);
+		s.score(r, 13);
+		//Rolled 5 ones, scored them as Yahtzee, 
+		assertEquals("got 50 points in that category", s.getScore(13), 50);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 250);
+		assertEquals("Total:", s.getTotal(), 250);
+		
+	}
+	@Test
+	public void test3OfAKind() {
+		Roll r = new Roll(1, 1, 1, 1, 1);
+		Scoresheet s = new Scoresheet();
+		s.score(r, r.sum());
+		//Rolled 5 ones, scored them as 3OfAKind, 
+		assertEquals("got 5 points in that category", s.getScore(7), 5);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 5);
+		assertEquals("Total:", s.getTotal(), 5);
+		s.score(r, 13);
+		//Rolled 5 ones, scored them as 4OfAKind, 
+		assertEquals("got 5 points in that category", s.getScore(8), 5);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 10);
+		assertEquals("Total:", s.getTotal(), 10);
+		s.score(r, 13);
+		//Rolled 5 ones, scored them as FullHouse, 
+		assertEquals("got 25 points in that category", s.getScore(9), 25);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 35);
+		assertEquals("Total:", s.getTotal(), 35);
+		
 	}
 
 }
