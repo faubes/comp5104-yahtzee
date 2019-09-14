@@ -26,6 +26,10 @@ public class Scoresheet {
 		sheet.set(i, j);
 	}
 
+	private void scoreZero(int i) {
+		sheet.set(i, 0);
+	}
+	
 	private int calculateTotalUpperSection() {
 		return sheet.stream().limit(6).reduce(Integer::sum).orElse(0);
 	}
@@ -45,21 +49,57 @@ public class Scoresheet {
 		} else {
 			switch (i) {
 			case 7:
-				if (r.hasTriple()) {
+				if (r.has3OfAKind()) {
 					score(i, r.sum());
+				}
+				else {
+					scoreZero(i);
 				}
 				break;
 			case 8:
+				if (r.has4OfAKind()) {
+					score(i, r.sum());
+				}
+				else {
+					scoreZero(i);
+				}
 				break;
 			case 9:
+				if (r.hasFullHouse()) {
+					score(i, 25));
+				}
+				else {
+					scoreZero(i);
+				}
 				break;
 			case 10:
+				if (r.hasSmallStraight()) {
+					score(i, 30);
+				}
+				else {
+					scoreZero(i);
+				}
 				break;
 			case 11:
+				if (r.hasLargeStraight()) {
+					score(i, 40);
+					
+				}
+				else {
+					scoreZero(i);
+				}
 				break;
 			case 12:
+				if (r.hasYahtzee()) {
+					score(i, 50);
+				}
+				else {
+					scoreZero(i);
+				}
 				break;
+				//chance
 			case 13:
+				score(i, r.sum());
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid category for scoring");

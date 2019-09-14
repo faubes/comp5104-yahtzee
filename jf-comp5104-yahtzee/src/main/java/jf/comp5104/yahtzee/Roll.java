@@ -149,7 +149,7 @@ public class Roll {
 		return countStraight() >= 3;
 	}
 
-	public boolean hasHasFullStraight() {
+	public boolean hasHasLargeStraight() {
 		return countStraight() == 4;
 	}
 
