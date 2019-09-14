@@ -70,5 +70,34 @@ public class RollTest {
 		assertFalse("Does not contain a 6", r.contains(6));
 	}
 	
+	@Test
+	public void testHasPair() {
+		Roll r = new Roll(new int[]{1,1,2,3,4});
+		assertTrue("Contains a pair", r.hasMultiple(2, 1));
+		assertFalse("Does not have a pair of two's", r.hasMultiple(2, 2));
+	}
 	
+	@Test
+	public void testHasFullHouse() {
+		Roll r = new Roll(1, 1, 2, 2, 2);
+		assertTrue("Has a full house", r.hasFullHouse());
+		r.set(5, 3); // set dice 5 to 3
+		assertFalse("Does not have full house", r.hasFullHouse());
+	}
+	
+	@Test
+	public void testHasSmallStraight() {
+		Roll r = new Roll(1, 2, 6, 3, 4);
+		assertTrue("Has a small straight", r.hasHasSmallStraight());
+		r.set(5, 1); // set dice 5 to 3
+		assertFalse("Does not have full house", r.hasHasSmallStraight());
+	}
+	
+	@Test
+	public void testHasFullStraight() {
+		Roll r = new Roll(3, 2, 5, 1, 4);
+		assertTrue("Has a full straight", r.hasHasFullStraight());
+		r.set(5, 1); // set dice 5 to 3
+		assertFalse("Does not have full straight", r.hasHasFullStraight());
+	}
 }

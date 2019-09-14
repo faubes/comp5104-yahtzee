@@ -26,6 +26,7 @@ public class DieTest {
 	// shouldn't create Die in bad state
 	@Test(expected = IllegalStateException.class)
 	public void testDieConstructorWithBadValue() {
+		@SuppressWarnings("unused")
 		Die d = new Die(10);
 	}
 	
@@ -33,9 +34,9 @@ public class DieTest {
 	@Test
 	public void testToString() {
 		Die d = new Die(1);
-		String expected = "-----\n" +
-						  "| 1 |\n" +
-						  "-----\n";
+		String expected = "-----" + Yahtzee.EOL +
+						  "| 1 |" + Yahtzee.EOL +
+						  "-----" + Yahtzee.EOL;
 		assertEquals("Die has string representation", d.toString(), expected);
 	}
 
