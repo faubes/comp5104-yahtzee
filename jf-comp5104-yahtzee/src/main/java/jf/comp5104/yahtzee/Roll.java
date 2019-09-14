@@ -166,4 +166,8 @@ public class Roll {
 		}
 		computeFrequency();
 	}
+
+	public int getMultiple(int i) {
+		return frequencyMap.get(i);
+	}
 }
