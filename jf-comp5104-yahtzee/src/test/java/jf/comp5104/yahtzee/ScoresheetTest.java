@@ -44,13 +44,13 @@ public class ScoresheetTest {
 	public void testScoreOnesInTwos() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
 		Scoresheet s = new Scoresheet();
-		s.score(r, 1);
+		s.score(r, 2);
 		//Rolled 5 ones, scored them as twos
 		assertEquals("got 0 points in that category", s.getScore(2), 0);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
-		assertEquals("Total:", s.getTotal(), 5);
+		assertEquals("Total:", s.getTotal(), 0);
 	}
 
 	// restricted scoring to valid categories 1-13
@@ -90,7 +90,7 @@ public class ScoresheetTest {
 		assertEquals("got 50 points in that category", s.getScore(13), 50);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 0", s.getLowerTotal(), 150);
+		assertEquals("Total of lower section: 150", s.getLowerTotal(), 150);
 		assertEquals("Total:", s.getTotal(), 150);
 		s.score(r, 13);
 		//Rolled 5 ones, scored them as Yahtzee, 
@@ -105,21 +105,21 @@ public class ScoresheetTest {
 	public void test3OfAKind() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
 		Scoresheet s = new Scoresheet();
-		s.score(r, r.sum());
+		s.score(r, 7);
 		//Rolled 5 ones, scored them as 3OfAKind, 
 		assertEquals("got 5 points in that category", s.getScore(7), 5);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 5);
 		assertEquals("Total:", s.getTotal(), 5);
-		s.score(r, 13);
+		s.score(r, 8);
 		//Rolled 5 ones, scored them as 4OfAKind, 
 		assertEquals("got 5 points in that category", s.getScore(8), 5);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 10);
 		assertEquals("Total:", s.getTotal(), 10);
-		s.score(r, 13);
+		s.score(r, 9);
 		//Rolled 5 ones, scored them as FullHouse, 
 		assertEquals("got 25 points in that category", s.getScore(9), 25);
 		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);

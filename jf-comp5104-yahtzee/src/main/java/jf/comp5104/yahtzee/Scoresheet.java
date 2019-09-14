@@ -42,78 +42,64 @@ public class Scoresheet {
 		if (i == 13 && sheet.containsKey(i)) {
 			// another Yathzee
 			yahtzees++;
-		} else if (i >= 1 && i <= 6) {
-			score(i, r.getMultiple(i) * i);
-			checkForBonus();
-		} else {
-			switch (i) {
-			case 7:
-				if (r.has3OfAKind()) {
-					score(i, r.sum());
-				} else {
-					scoreZero(i);
-				}
-				break;
-			case 8:
-				if (r.has4OfAKind()) {
-					score(i, r.sum());
-				} else {
-					scoreZero(i);
-				}
-				break;
-			case 9:
-				if (r.hasFullHouse()) {
-					score(i, 25);
-				} else {
-					scoreZero(i);
-				}
-				break;
-			case 10:
-				if (r.hasSmallStraight()) {
-					score(i, 30);
-				} else {
-					scoreZero(i);
-				}
-				break;
-			case 11:
-				if (r.hasLargeStraight()) {
-					score(i, 40);
-
-				} else {
-					scoreZero(i);
-				}
-				break;
-			// chance is twelve: add dice
-			case 12:
-				score(i, r.sum());
-				break;
-			// yahtzee! 5 of a kind
-			case 13:
-				if (r.hasYahtzee()) {
-					score(i, 50);
-				} else {
-					scoreZero(i);
-				}
-				break;
-			// chance
-			default:
-				// shouldn't ever get here
-				throw new IllegalArgumentException("Invalid category for scoring");
-
-			}
+			return;
 		}
+
+		int score = 0;
+
+		switch (i) {
+		case 7:
+			if (r.has3OfAKind()) {
+				score = r.sum();
+			}
+			break;
+		case 8:
+			if (r.has4OfAKind()) {
+				score = r.sum();
+			}
+			break;
+		case 9:
+			if (r.hasFullHouse()) {
+				score = 25;
+			}
+			break;
+		case 10:
+			if (r.hasSmallStraight()) {
+				score = 30;
+			}
+			break;
+		case 11:
+			if (r.hasLargeStraight()) {
+				score = 40;
+			}
+			break;
+		// chance is twelve: add dice
+		case 12:
+			score = r.sum();
+			break;
+		// yahtzee! 5 of a kind
+		case 13:
+			if (r.hasYahtzee()) {
+				score = 50;
+			}
+			break;
+		default:
+			score = r.getMultiple(i) * i;
+		}
+		score(i, score);
+		checkForBonus();
 	}
 
 	private void checkForBonus() {
-		if (calculateTotalUpperSection() >= 63) {
-			bonus = true;
-		} else {
-			bonus = false;
-		}
+		setBonus(calculateTotalUpperSection() >= 63);
+	}
+
+	private void setBonus(boolean b) {
+		bonus = b;
 	}
 
 	private int calculateTotalUpperSection() {
-		return sheet.entrySet().stream().filter((k) -> k.getValue() >= 1 && k.getValue() <= 6).map((m) -> m.getValue())
+		return sheet.entrySet().stream().filter((k) -> k.getKey() >= 1 && k.getKey() <= 6).map((m) -> m.getValue())
 				.reduce(Integer::sum).orElse(0);
 	}
 
@@ -128,11 +114,11 @@ public class Scoresheet {
 
 	public int getLowerTotal() {
 		return sheet.entrySet().stream().filter(p -> p.getKey() > 6).map(p -> p.getValue()).reduce(Integer::sum)
-				.orElse(0);
+				.orElse(0) + yahtzees * 100;
 	}
 
 	public int getTotal() {
-		return getUpperTotal2() + getLowerTotal() + yahtzees * 100;
+		return getUpperTotal2() + getLowerTotal();
 	}
 
 	// get score from a particular category

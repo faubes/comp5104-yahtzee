@@ -81,18 +81,17 @@ public class Roll {
 
 	// roll contains i copies of j
 	public boolean hasMultiple(int i, int j) {
-		computeFrequency();
 		return (int) frequencyMap.getOrDefault(j, 0) == i;
 	}
 
 	public boolean hasFullHouse() {
-		computeFrequency();
 		Set<Map.Entry<Integer, Integer>> entrySet = frequencyMap.entrySet();
 		int frequencyOfFirstFace = ((Map.Entry<Integer, Integer>) entrySet.iterator().next()).getValue();
 		// we know we have a full house
 		// 1) we only have two kinds of cards/faces
 		// 2) we have at least two of one kind and no more than 3.
-		return (frequencyMap.size() == 2) && (frequencyOfFirstFace >= 2) && (frequencyOfFirstFace <= 3);
+		// 3) or we have 5 of a kind.
+		return (frequencyMap.size() == 1) || (frequencyMap.size() == 2) && (frequencyOfFirstFace >= 2) && (frequencyOfFirstFace <= 3);
 	}
 
 	public String toString() {
@@ -179,6 +178,6 @@ public class Roll {
 	}
 
 	public int getMultiple(int i) {
-		return frequencyMap.get(i);
+		return frequencyMap.getOrDefault(i, 0);
 	}
 }
