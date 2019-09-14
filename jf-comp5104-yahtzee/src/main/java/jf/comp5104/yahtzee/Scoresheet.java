@@ -99,7 +99,9 @@ public class Scoresheet {
 	}
 
 	private int calculateTotalUpperSection() {
-		return sheet.entrySet().stream().filter((k) -> k.getKey() >= 1 && k.getKey() <= 6).map((m) -> m.getValue())
+		return sheet.entrySet().stream()
+				.filter(k -> k.getKey() >= 1 && k.getKey() <= 6)
+				.map(Map.Entry::getValue)
 				.reduce(Integer::sum).orElse(0);
 	}
 
@@ -113,7 +115,8 @@ public class Scoresheet {
 	}
 
 	public int getLowerTotal() {
-		return sheet.entrySet().stream().filter(p -> p.getKey() > 6).map(p -> p.getValue()).reduce(Integer::sum)
+		return sheet.entrySet().stream().filter(k -> k.getKey() > 6)
+				.map(Map.Entry::getValue).reduce(Integer::sum)
 				.orElse(0) + yahtzees * 100;
 	}
 

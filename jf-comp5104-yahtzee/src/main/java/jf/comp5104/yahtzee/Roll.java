@@ -91,7 +91,9 @@ public class Roll {
 		// 1) we only have two kinds of cards/faces
 		// 2) we have at least two of one kind and no more than 3.
 		// 3) or we have 5 of a kind.
-		return (frequencyMap.size() == 1) || (frequencyMap.size() == 2) && (frequencyOfFirstFace >= 2) && (frequencyOfFirstFace <= 3);
+		return frequencyMap.size() == 1
+				|| (frequencyMap.size() == 2 && 
+				(frequencyOfFirstFace >= 2 && frequencyOfFirstFace <= 3));
 	}
 
 	public String toString() {
@@ -122,7 +124,7 @@ public class Roll {
 	private int countStraight() {
 		// first sort dice
 		Iterator<Integer> sortedIterator = diceList.stream().mapToInt(Die::getValue).sorted().iterator();
-;
+		;
 		// then count successors
 		int countStraight = 0;
 		int i = sortedIterator.next();
@@ -155,14 +157,15 @@ public class Roll {
 	public boolean has3OfAKind() {
 		return countMaxMultiple() >= 3;
 	}
-	
+
 	public boolean has4OfAKind() {
 		return countMaxMultiple() >= 4;
 	}
-	
+
 	private int countMaxMultiple() {
 		return frequencyMap.entrySet().stream().mapToInt((me) -> me.getValue()).max().orElse(0);
 	}
+
 	public boolean hasYahtzee() {
 		return frequencyMap.size() == 1;
 	}
