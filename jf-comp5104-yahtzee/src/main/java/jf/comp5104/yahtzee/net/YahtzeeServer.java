@@ -11,13 +11,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import jf.comp5104.yahtzee.Player;
+
 // sources and tutorials for networking components
 // docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
 // docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
 // cs.lmu.edu/~ray/notes/javanetexamples/#tictactoe
 // add logging eventually?
 
-public class YahtzeeServer implements Runnable {
+public class YahtzeeServer implements Runnable, AbstractServer {
 	public static final String DEFAULT_PORT = "3333";
 	public static final String DEFAULT_HOST = "localhost";
 
@@ -28,27 +30,39 @@ public class YahtzeeServer implements Runnable {
 	private final ServerSocket serverSocket;
 	private final ExecutorService pool;
 	private ArrayList<Player> players;
+	private ArrayList<AbstractSession> clients;
+	private boolean stayOn;
+	private boolean isOn;
 
 	public YahtzeeServer(int port, int poolSize) throws IOException {
 		portNumber = port;
 		serverSocket = new ServerSocket(port);
 		pool = Executors.newFixedThreadPool(poolSize);
 		System.out.println("Created server socket on port " + port);
+		ArrayList<AbstractSession> clients = new ArrayList<AbstractSession>(10);
+		stayOn = true;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		int port = getPort();
 
 		System.out.println("Server listening on port " + port);
+		isOn = true;
 		try {
-			for (;;) {
-				pool.execute(new Handler(serverSocket.accept()));
+			while (stayOn) {
+				// listening for connections
+				Socket newClient = serverSocket.accept();
+				AbstractSession newConnection = new TCPConnection(newClient);
+				clients.add(newConnection);
+				pool.execute(new ClientHandler(newConnection, this));
 			}
 		} catch (IOException ex) {
+			System.err.println("Unable to start listening");
+			System.err.println(ex.toString());
 			pool.shutdown();
 		}
+		shutdown();
 	}
 
 	public int getPort() {
@@ -61,6 +75,7 @@ public class YahtzeeServer implements Runnable {
 
 	// shutdown
 	void shutdownAndAwaitTermination(ExecutorService pool) {
+		stayOn = false;
 		pool.shutdown(); // Disable new tasks from being submitted
 		try {
 			// Wait a while for existing tasks to terminate
@@ -77,43 +92,69 @@ public class YahtzeeServer implements Runnable {
 			Thread.currentThread().interrupt();
 		}
 	}
+
+	@Override
+	public void handleMsgFromClient() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void handleMsgFromUI() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean serverStarted() {
+		return isOn;
+	}
+
+	@Override
+	public boolean serverStopped() {
+		return !isOn;
+	}
+
+	@Override
+	public boolean start() {
+		stayOn = true;
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		stayOn = false;
+		return stayOn;
+	}
 }
 
 // handler
 
-class Handler implements Runnable {
-	private final Socket socket;
-	private PrintWriter out;
-	private BufferedReader in;
+class ClientHandler implements Runnable {
+	private final AbstractSession session;
+	private final AbstractServer server;
+	boolean stayOn;
 
-	Handler(Socket socket) {
-		this.socket = socket;
-		try {
-			out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	ClientHandler(AbstractSession session, AbstractServer server) {
+		this.session = session;
+		this.server = server;
+		boolean stayOn = true;
 	}
 
 	public void run() {
-		out.println("Welcome to CLI Yahtzee");
+		session.send("Welcome to CLI Yahtzee");
 		for (;;) {
 			String inputLine, outputLine;
-			try {
-				while ((inputLine = in.readLine()) != null) {
-					out.println(inputLine);
-					// received exit command
-					if ("exit".equalsIgnoreCase(inputLine)) {
-						out.println("Bye");
-						break;
-					}
+			while (stayOn) {
+
+				inputLine = (String) session.receive();
+				session.send(inputLine);
+				// received exit command
+				if ("exit".equalsIgnoreCase(inputLine)) {
+					session.send("Bye");
+					stayOn = false;
+					break;
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 		}

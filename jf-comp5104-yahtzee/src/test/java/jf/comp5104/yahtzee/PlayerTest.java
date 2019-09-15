@@ -2,8 +2,6 @@ package jf.comp5104.yahtzee;
 
 import org.junit.Test;
 
-import jf.comp5104.yahtzee.net.Player;
-
 import static org.junit.Assert.*;
 
 
