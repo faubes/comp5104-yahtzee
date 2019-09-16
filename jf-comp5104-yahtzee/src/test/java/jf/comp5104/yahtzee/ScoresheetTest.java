@@ -141,7 +141,7 @@ public class ScoresheetTest {
 		Roll nothing = new Roll(1,4,2,5,6);
 		s.score(yahtzee6, 13);
 		s2.score(nothing, 1);
-		assertTrue("Yahtzee is more points than nothing", s > s2);
+		assertTrue("Yahtzee is more points than nothing", s.compareTo(s2) > 0);
 	}
 
 }

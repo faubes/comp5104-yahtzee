@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scoresheet {
+public class Scoresheet implements Comparable<Scoresheet> {
 
 	private String name;
 	private Map<Integer, Integer> sheet; // map from category to score
@@ -127,6 +127,12 @@ public class Scoresheet {
 	// get score from a particular category
 	public int getScore(int i) {
 		return sheet.getOrDefault(i, 0);
+	}// TODO Auto-generated method stub
+
+	
+	@Override
+	public int compareTo(Scoresheet o) {
+		return getTotal() - o.getTotal();
 	}
 
 }
