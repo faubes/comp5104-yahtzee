@@ -72,8 +72,8 @@ public class Roll {
 	}
 
 	public boolean equals(Roll or) {
-		List one = new ArrayList<Die>(or.diceList);
-		List two = new ArrayList<Die>(diceList);
+		List<Die> one = new ArrayList<Die>(or.diceList);
+		List<Die> two = new ArrayList<Die>(diceList);
 		Collections.sort(one);
 		Collections.sort(two);
 		return one.equals(two);

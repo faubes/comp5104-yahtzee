@@ -1,9 +1,7 @@
 package jf.comp5104.yahtzee;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 public class Scoresheet implements Comparable<Scoresheet> {
 
@@ -28,10 +26,6 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 	private void score(int i, int j) {
 		sheet.put(i, j);
-	}
-
-	private void scoreZero(Integer i) {
-		sheet.put(i, 0);
 	}
 
 	public void score(Roll r, int i) {

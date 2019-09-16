@@ -1,9 +1,6 @@
 package jf.comp5104.yahtzee.net;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,8 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
-import jf.comp5104.yahtzee.Player;
 
 // sources and tutorials for networking components
 // docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
@@ -27,39 +22,38 @@ public class YahtzeeServer implements Runnable {
 
 	private int portNumber;
 	private String hostName;
-	// private Socket socket;
-
 	private final ServerSocket serverSocket;
 	private final ExecutorService pool;
-	private ArrayList<Player> players;
 	private ArrayList<TCPConnection> clients;
-	protected boolean stayOn;
-	protected boolean isOn;
+	protected boolean shutdown;
 	protected BlockingQueue<String> messageQueue;
 
-	public YahtzeeServer(int port, int poolSize) throws IOException {
-		portNumber = port;
-		serverSocket = new ServerSocket(port);
-		pool = Executors.newFixedThreadPool(poolSize);
-		messageQueue = new LinkedBlockingQueue<String>();
-		System.out.println("Created server socket on port " + port);
-		clients = new ArrayList<TCPConnection>(10);
-		stayOn = true;
-
+	public YahtzeeServer(String hostname, int port, int poolSize) throws IOException {
+		this.hostName = hostname;
+		this.portNumber = port;
+		this.serverSocket = new ServerSocket(port);
+		this.pool = Executors.newFixedThreadPool(poolSize);
+		this.messageQueue = new LinkedBlockingQueue<String>();
+		this.clients = new ArrayList<TCPConnection>(10);
+		shutdown = false;
+		System.out.println("Server socket " + hostName + " : " + port);
+		
 	}
 
+	public YahtzeeServer(int port, int poolSize) throws IOException {
+		this("localhost", port, poolSize);
+	}
 	
-	// Yahtzee Server thread listens for and adds clients.
+	// YahtzeeServer thread listens for and adds clients.
 	@Override
 	public void run() {
 		int port = getPort();
 
 		System.out.println("Server listening on port " + port);
-		isOn = true;
 		pool.execute(new MessageQueueHandler(this));
 
 		try {
-			while (stayOn) {
+			while (shutdown) {
 				// listening for connections
 				Socket newClient = serverSocket.accept();
 				TCPConnection newConnection = new TCPConnection(newClient);
@@ -86,7 +80,7 @@ public class YahtzeeServer implements Runnable {
 
 	// shutdown
 	void shutdownAndAwaitTermination(ExecutorService pool) {
-		stayOn = false;
+		shutdown = true;
 		pool.shutdown(); // Disable new tasks from being submitted
 		try {
 			// Wait a while for existing tasks to terminate
@@ -105,25 +99,24 @@ public class YahtzeeServer implements Runnable {
 	}
 
 	public boolean serverStarted() {
-		return isOn;
+		return !shutdown;
 	}
 
 	public boolean serverStopped() {
-		return !isOn;
+		return shutdown;
 	}
 
-	public boolean start() {
-		stayOn = true;
-		return false;
+	public void start() {
+		shutdown = false;
 	}
 
-	public boolean stop() {
-		stayOn = false;
-		return stayOn;
+	public void stop() {
+		shutdown();
+		shutdown = true;
 	}
 
 	public boolean getStayOn() {
-		return stayOn;
+		return shutdown;
 	}
 
 	// nested MessageQueue class polls the queue and broadcasts to all clients
@@ -166,18 +159,18 @@ public class YahtzeeServer implements Runnable {
 	class ClientHandler implements Runnable {
 		private final TCPConnection session;
 		private final YahtzeeServer server;
-		boolean stayOn;
+		private volatile boolean shutdown;
 
 		ClientHandler(TCPConnection session, YahtzeeServer server) {
 			this.session = session;
 			this.server = server;
-			stayOn = true;
+			this.shutdown = false;
 		}
 
 		public void run() {
 			session.send("Welcome to CLI Yahtzee");
 			String inputLine;
-			while (stayOn) {
+			while (!shutdown) {
 				// System.out.println("Listening for messages on thread " + this.hashCode());
 				inputLine = session.receive();
 				// send command to server through queue
@@ -187,7 +180,7 @@ public class YahtzeeServer implements Runnable {
 				// received exit command
 				if ("exit".equalsIgnoreCase(inputLine)) {
 					session.send("Bye");
-					stayOn = false;
+					shutdown = true;
 				}
 			}
 		}

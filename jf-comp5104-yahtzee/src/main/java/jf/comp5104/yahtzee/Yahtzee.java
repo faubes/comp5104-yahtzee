@@ -82,12 +82,13 @@ public class Yahtzee {
 				}
 				YahtzeeClient client = new YahtzeeClient(hostname, port);
 				System.out.println("Run Client");
-				//client.run();
+				client.start();
 			}
 			
 		} 
 		// Catch network errors from server/client creations
 		catch (IOException e) {
+			System.err.println("IOException caught in Yahtzee class");
 			e.printStackTrace();
 			return;
 		}

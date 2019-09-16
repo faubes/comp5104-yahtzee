@@ -2,8 +2,6 @@ package jf.comp5104.yahtzee;
 
 import static org.junit.Assert.*;
 
-import java.lang.annotation.Annotation;
-
 import org.junit.*;
 
 public class ScoresheetTest {
