@@ -15,7 +15,7 @@ public class PlayerTest {
 	
 	@Before
 	public void setUp() {
-		Player p = new Player();
+		p = new Player();
 		//List<Player> l = new ArrayList<Player>();
 	}
 	

@@ -14,8 +14,8 @@ public class ScoresheetTest {
 	
 	@Before
 	public void setUp() {
-		Scoresheet s = new Scoresheet();
-		Scoresheet s2 = new Scoresheet();
+		s = new Scoresheet();
+		s2 = new Scoresheet();
 	}
 	
 	@After
