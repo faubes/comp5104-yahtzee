@@ -37,10 +37,10 @@ public class YahtzeeClient implements Runnable {
 	public void run() {
 		String userInput;
 		while (stayOn) {
-			System.out.println("Awaiting user input");
+			//System.out.println("Awaiting user input");
 			try {
 				userInput = stdIn.readLine();
-				System.out.println("Client input: " + userInput);
+				// System.out.println("Client input: " + userInput);
 				if (StringUtils.isNotBlank(userInput)) {
 					session.send(userInput);
 				}
@@ -68,7 +68,7 @@ public class YahtzeeClient implements Runnable {
 		public void run() {
 			String fromServer;
 			while (client.stayOn) {
-				System.out.println("Listening for server");
+				// System.out.println("Listening for server");
 				fromServer = session.receive();
 				System.out.println("Server: " + fromServer);
 

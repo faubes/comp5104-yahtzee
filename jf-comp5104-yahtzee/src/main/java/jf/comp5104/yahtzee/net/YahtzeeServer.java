@@ -48,22 +48,24 @@ public class YahtzeeServer implements Runnable {
 
 	}
 
+	
+	// Yahtzee Server thread listens for and adds clients.
 	@Override
 	public void run() {
 		int port = getPort();
 
 		System.out.println("Server listening on port " + port);
 		isOn = true;
+		pool.execute(new MessageQueueHandler(this));
+
 		try {
 			while (stayOn) {
-				if (!clients.isEmpty()) {
-					pool.execute(new Listener(this));
-				}
 				// listening for connections
 				Socket newClient = serverSocket.accept();
 				TCPConnection newConnection = new TCPConnection(newClient);
 				System.out.println("New connection: " + newConnection.toString());
 				clients.add(newConnection);
+				// ClientHandler gets input from client, adds to queue
 				pool.execute(new ClientHandler(newConnection, this));
 			}
 		} catch (IOException ex) {
@@ -124,12 +126,11 @@ public class YahtzeeServer implements Runnable {
 		return stayOn;
 	}
 
-	// nested listener class
-	// polls the messageQueue and broadcasts to all clients
-	class Listener implements Runnable {
+	// nested MessageQueue class polls the queue and broadcasts to all clients
+	class MessageQueueHandler implements Runnable {
 		YahtzeeServer server;
 
-		Listener(YahtzeeServer server) {
+		MessageQueueHandler(YahtzeeServer server) {
 			this.server = server;
 		}
 
@@ -138,12 +139,13 @@ public class YahtzeeServer implements Runnable {
 			while (server.getStayOn()) {
 				try {
 					if (server.messageQueue.isEmpty()) {
-						System.out.println("No messages");
+						// for debug
+						// System.out.println("No messages");
 						Thread.sleep(5000);
 					} else {
-						System.out.println("take message from q");
+						// System.out.println("take message from q");
 						String msg = server.messageQueue.take();
-						System.out.println(msg);
+						// System.out.println(msg);
 						broadcast(msg);
 					}
 				} catch (InterruptedException e) {
@@ -154,7 +156,7 @@ public class YahtzeeServer implements Runnable {
 
 		public void broadcast(String str) {
 			for (TCPConnection c : clients) {
-				System.out.println("Broadcasting to " + c.getId());
+				// System.out.println("Broadcasting to " + c.getId());
 				c.send(str);
 			}
 		}
@@ -176,13 +178,12 @@ public class YahtzeeServer implements Runnable {
 			session.send("Welcome to CLI Yahtzee");
 			String inputLine;
 			while (stayOn) {
-				System.out.println("Listening for messages on thread " + this.hashCode());
+				// System.out.println("Listening for messages on thread " + this.hashCode());
 				inputLine = session.receive();
-				// process commands
-				System.out.println("Adding message " + inputLine);
+				// send command to server through queue
+				// System.out.println("Adding message " + inputLine);
 				server.messageQueue.add(inputLine);
-				System.out.println("message added to queue");
-				// for now broadcast?
+				// System.out.println("message added to queue");
 				// received exit command
 				if ("exit".equalsIgnoreCase(inputLine)) {
 					session.send("Bye");
@@ -193,5 +194,3 @@ public class YahtzeeServer implements Runnable {
 	}
 
 }
-
-// handler

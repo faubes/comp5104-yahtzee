@@ -69,16 +69,14 @@ public class TCPConnection {
 	}
 
 	public void send(String str) {
-		System.out.println(this.toString());
-		System.out.println("Connection send()");
+		// System.out.println(this.toString());
 		out.println(str);
 	}
 
 	public String receive() {
 		String s;
 		try {
-			System.out.println(this.toString());
-			System.out.println("Connection receive()");
+			// System.out.println(this.toString());
 			s = in.readLine();
 		}
 		catch (IOException e) {
