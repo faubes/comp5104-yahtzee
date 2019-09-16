@@ -2,25 +2,38 @@ package jf.comp5104.yahtzee;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
+import java.lang.annotation.Annotation;
+
+import org.junit.*;
 
 public class ScoresheetTest {
 
+	/* Construct a few objects to manipulate */
+	private Scoresheet s;
+	private Scoresheet s2;
+	
+	@Before
+	public void setUp() {
+		Scoresheet s = new Scoresheet();
+		Scoresheet s2 = new Scoresheet();
+	}
+	
+	@After
+	public void tearDown() {	} // explicitly destroy objects?
+	
 	@Test
 	public void testScoresheetConstructorWithoutParameters() {
-		Scoresheet s = new Scoresheet();
 		assertEquals("Default player name", s.getName(), "");
 	}
 	
 	@Test
 	public void testScoresheetConstructorWithName() {
-		Scoresheet s = new Scoresheet("Joe");
+		s = new Scoresheet("Joe");
 		assertEquals("Scoresheet for Joe", s.getName(), "Joe");
 	}
 	
 	@Test
 	public void testNewScoresheetHasZeroScore() {
-		Scoresheet s = new Scoresheet();
 		assertEquals("Total of upper section: 0", s.getUpperTotal1(), 0);
 		assertEquals("Total of upper section (with bonus): 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
@@ -30,7 +43,6 @@ public class ScoresheetTest {
 	@Test
 	public void testScoreOnes() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 1);
 		//Rolled 5 ones, scored them as ones,
 		assertEquals("Got 5 points in that category", s.getScore(1), 5);
@@ -43,7 +55,6 @@ public class ScoresheetTest {
 	@Test
 	public void testScoreOnesInTwos() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 2);
 		//Rolled 5 ones, scored them as twos
 		assertEquals("got 0 points in that category", s.getScore(2), 0);
@@ -57,14 +68,12 @@ public class ScoresheetTest {
 	@Test(expected = IndexOutOfBoundsException.class)
 	public void testInvalidScore() {
 		Roll r = new Roll(1, 1,1,1,1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 0);
 	}
 	
 	@Test
 	public void testYahtzee() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 13);
 		//Rolled 5 ones, scored them as Yahtzee, 
 		assertEquals("got 50 points in that category", s.getScore(13), 50);
@@ -77,7 +86,6 @@ public class ScoresheetTest {
 	@Test
 	public void testMultipleYahtzees() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 13);
 		//Rolled 5 ones, scored them as Yahtzee, 
 		assertEquals("got 50 points in that category", s.getScore(13), 50);
@@ -104,7 +112,6 @@ public class ScoresheetTest {
 	@Test
 	public void test3OfAKind() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-		Scoresheet s = new Scoresheet();
 		s.score(r, 7);
 		//Rolled 5 ones, scored them as 3OfAKind, 
 		assertEquals("got 5 points in that category", s.getScore(7), 5);
@@ -127,6 +134,14 @@ public class ScoresheetTest {
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 35);
 		assertEquals("Total:", s.getTotal(), 35);
 		
+	}
+	
+	public void testScoresheetsAreComparable() {
+		Roll yahtzee6 = new Roll(6,6,6,6,6);
+		Roll nothing = new Roll(1,4,2,5,6);
+		s.score(yahtzee6, 13);
+		s2.score(nothing, 1);
+		assertTrue("Yahtzee is more points than nothing", s > s2);
 	}
 
 }

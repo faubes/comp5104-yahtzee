@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class PlayerTest {
 
 	@Test
-	public void test() {
+	public void NewPlayerTest() {
 		Player p = new Player("Joe");
 		assertEquals("Create new player named Joe", "Joe", p.getName());
 	}
