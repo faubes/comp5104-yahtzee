@@ -81,7 +81,8 @@ public class Yahtzee {
 					}
 				}
 				YahtzeeClient client = new YahtzeeClient(hostname, port);
-				client.connect();
+				System.out.println("Run Client");
+				client.run();
 			}
 			
 		} 

@@ -13,13 +13,13 @@ import java.net.Socket;
 import java.util.UUID;
 
 // Concrete String (PrintWriter/BufferedReader) implementation of AbstractSession
-public class TCPConnection implements AbstractSession {
+public class TCPConnection {
  
 	private String hostname;
 	private int port;
 	private Socket socket;
-	private InputStream din;
-	private OutputStream dout;
+	//private InputStream din;
+	//private OutputStream dout;
 	private PrintWriter out;
 	private BufferedReader in;
 	UUID id;
@@ -33,8 +33,8 @@ public class TCPConnection implements AbstractSession {
 	public TCPConnection(Socket socket) throws IOException {
 		try {
 			this.socket = socket;
-			this.din = socket.getInputStream();
-			this.dout = socket.getOutputStream();
+			//this.din = socket.getInputStream();
+			//this.dout = socket.getOutputStream();
 			this.out = new PrintWriter(socket.getOutputStream(), true);
 			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		}
@@ -47,7 +47,7 @@ public class TCPConnection implements AbstractSession {
 		id = UUID.randomUUID();
 		
 	}
-	@Override
+
 	public Socket getSocket() {
 		return socket;
 	}
@@ -64,27 +64,28 @@ public class TCPConnection implements AbstractSession {
 		this.port = p;
 	}
 
-	@Override
 	public UUID getId() {
 		return id;
 	}
 
-	@Override
-	public void send(Object o) {
-		out.println(o.toString());
+	public void send(String str) {
+		System.out.println(this.toString());
+		System.out.println("Connection send()");
+		out.println(str);
 	}
 
-	@Override
-	public Object receive() {
-		StringBuilder sb = new StringBuilder();
+	public String receive() {
+		String s;
 		try {
-			sb.append(in.readLine());
+			System.out.println(this.toString());
+			System.out.println("Connection receive()");
+			s = in.readLine();
 		}
 		catch (IOException e) {
+			s = "";
 			System.err.println("Unable to read from socket");
 		}
-
-		return (Object)sb.toString();
+		return s;
 	}
 
 	public InetAddress getINetAddress() {
@@ -95,4 +96,7 @@ public class TCPConnection implements AbstractSession {
 		INetAddress = iNetAddress;
 	}
 
+	public String toString() {
+		return this.getHostname() + " " + this.getPort() + " " + this.id;
+	}
 }

@@ -9,44 +9,75 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class YahtzeeClient {
+public class YahtzeeClient implements Runnable {
 	int portNumber;
 	String hostName;
+	TCPConnection session;
+	BufferedReader stdIn;
+	boolean stayOn;
+	ServerHandler serverHandler;
 
 	public YahtzeeClient(String host, int port) {
 		portNumber = port;
 		hostName = host;
+		try {
+			session = new TCPConnection(hostName, portNumber);
+			stdIn = new BufferedReader(new InputStreamReader(System.in));
+			stayOn = true;
+			System.out.println("Connected to server " + hostName + " on port " + portNumber);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		serverHandler = new ServerHandler(session, this);
+		new Thread(serverHandler).start();
+		new Thread(this).start();
 	}
 
-	public void connect() {
-		try (Socket socket = new Socket(hostName, portNumber);
-				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));) {
-			System.out.println("Connected to server " + hostName + " on port " + portNumber);
+	@Override
+	public void run() {
+		String userInput;
+		while (stayOn) {
+			System.out.println("Awaiting user input");
+			try {
+				userInput = stdIn.readLine();
+				System.out.println("Client input: " + userInput);
+				if (StringUtils.isNotBlank(userInput)) {
+					session.send(userInput);
+				}
+				if (StringUtils.startsWith(userInput.toLowerCase(), "quit")) {
+					stayOn = false;
+				}
+			} catch (IOException e) {
+				stayOn = false;
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Disconnected.");
+	}
 
+	class ServerHandler implements Runnable {
+
+		TCPConnection session;
+		YahtzeeClient client;
+
+		public ServerHandler(TCPConnection session, YahtzeeClient client) {
+			this.session = session;
+			this.client = client;
+		}
+
+		public void run() {
 			String fromServer;
-			String userInput;
-			while ((fromServer = in.readLine()) != null) {
+			while (client.stayOn) {
+				System.out.println("Listening for server");
+				fromServer = session.receive();
 				System.out.println("Server: " + fromServer);
 
 				if ("Bye".equalsIgnoreCase(fromServer)) {
 					break;
 				}
 
-				userInput = stdIn.readLine();
-				if (StringUtils.isNotBlank(userInput)) {
-					out.println(userInput);
-				}
 			}
-
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		System.out.println("Disconnected.");
 	}
+
 }
