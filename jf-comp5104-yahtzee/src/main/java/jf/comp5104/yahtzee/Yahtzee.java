@@ -10,8 +10,8 @@ import java.io.*;
 public class Yahtzee {
 
 	// String constants used throughout application
-	static final String EOL = System.getProperty("line.separator");
-	static final String TAB = "\t";
+	public static final String EOL = System.getProperty("line.separator");
+	protected static final String TAB = "\t";
 	
 	// Example command line stuff from
 	// https://dzone.com/articles/java-command-line-interfaces-part-1-apache-commons

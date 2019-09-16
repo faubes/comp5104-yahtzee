@@ -91,6 +91,6 @@ public class TCPConnection {
 	}
 
 	public String toString() {
-		return this.getHostname() + " " + this.getPort() + " " + this.id;
+		return id.toString();
 	}
 }

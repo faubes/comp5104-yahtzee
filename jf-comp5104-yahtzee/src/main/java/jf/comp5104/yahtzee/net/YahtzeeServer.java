@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import jf.comp5104.yahtzee.Yahtzee;
+
 // sources and tutorials for networking components
 // docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
 // docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
@@ -37,13 +39,36 @@ public class YahtzeeServer implements Runnable {
 		this.clients = new ArrayList<TCPConnection>(10);
 		shutdown = false;
 		System.out.println("Server socket " + hostName + " : " + port);
-		
+
 	}
 
 	public YahtzeeServer(int port, int poolSize) throws IOException {
 		this("localhost", port, poolSize);
 	}
-	
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Hostname: ");
+		sb.append(hostName);
+		sb.append(Yahtzee.EOL);
+		sb.append("Port number: ");
+		sb.append(portNumber);
+		sb.append(Yahtzee.EOL);
+		sb.append("Server Socket info: ");
+		sb.append(serverSocket.toString());
+		sb.append(Yahtzee.EOL);
+		sb.append("Connected clients: ");
+		sb.append(Yahtzee.EOL);
+		int i = 0;
+		for (TCPConnection c : clients) {
+			sb.append("Client ");
+			sb.append(++i);
+			sb.append(c.toString());
+			sb.append(Yahtzee.EOL);
+		}
+		return sb.toString();
+	}
+
 	// YahtzeeServer thread listens for and adds clients.
 	@Override
 	public void run() {
@@ -171,7 +196,8 @@ public class YahtzeeServer implements Runnable {
 			session.send("Welcome to CLI Yahtzee");
 			String inputLine;
 			while (!shutdown) {
-				// System.out.println("Listening for messages on thread " + this.hashCode());
+				// System.out.println("Listening for messages on thread " +
+				// this.hashCode());
 				inputLine = session.receive();
 				// send command to server through queue
 				// System.out.println("Adding message " + inputLine);
