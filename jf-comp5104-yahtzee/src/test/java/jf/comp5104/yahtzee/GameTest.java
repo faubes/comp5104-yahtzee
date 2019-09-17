@@ -2,7 +2,12 @@ package jf.comp5104.yahtzee;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.Test;
+
+import jf.comp5104.yahtzee.net.YahtzeeServer;
+
 import org.junit.*;
 
 public class GameTest {
@@ -11,10 +16,17 @@ public class GameTest {
 	private Player p1;
 	private Player p2;
 	private Player p3;
+	private YahtzeeServer server;
 	
 	@Before
 	public void setUp() {
-		g = new Game();
+		try {
+			server = new YahtzeeServer(3333, 10);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		g = new Game("Game 1", server);
 		g.addPlayer(p1);
 		g.addPlayer(p2);
 		g.addPlayer(p3);		

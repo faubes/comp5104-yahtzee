@@ -140,21 +140,24 @@ public class YahtzeeServer implements Runnable {
 		shutdown = true;
 	}
 
-	public boolean getStayOn() {
-		return shutdown;
-	}
-
 	// nested MessageQueue class polls the queue and broadcasts to all clients
 	class MessageQueueHandler implements Runnable {
+
+		private volatile boolean shutdown;
 		YahtzeeServer server;
 
 		MessageQueueHandler(YahtzeeServer server) {
 			this.server = server;
+			this.shutdown = false;
 		}
 
+		void setShutdown(boolean b) {
+			this.shutdown = b;
+		}
+		
 		public void run() {
 			System.out.println("Listening for messages");
-			while (server.getStayOn()) {
+			while (!shutdown) {
 				try {
 					if (server.messageQueue.isEmpty()) {
 						// for debug

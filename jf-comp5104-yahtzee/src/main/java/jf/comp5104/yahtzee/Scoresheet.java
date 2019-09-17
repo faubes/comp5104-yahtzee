@@ -1,7 +1,9 @@
 package jf.comp5104.yahtzee;
 
 import java.util.Map;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Scoresheet implements Comparable<Scoresheet> {
 
@@ -10,6 +12,12 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 	private boolean bonus;
 	private int yahtzees;
+
+	static String[] Categories = {
+		"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", 
+		"ThreeOfAKind", "FourOfAKind", "FullHouse", "Small Straight",
+		"Large Straight", "Chance", "Yahtzee"
+	};
 
 	public Scoresheet() {
 		this("");
@@ -93,9 +101,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	}
 
 	private int calculateTotalUpperSection() {
-		return sheet.entrySet().stream()
-				.filter(k -> k.getKey() >= 1 && k.getKey() <= 6)
-				.map(Map.Entry::getValue)
+		return sheet.entrySet().stream().filter(k -> k.getKey() >= 1 && k.getKey() <= 6).map(Map.Entry::getValue)
 				.reduce(Integer::sum).orElse(0);
 	}
 
@@ -109,8 +115,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	}
 
 	public int getLowerTotal() {
-		return sheet.entrySet().stream().filter(k -> k.getKey() > 6)
-				.map(Map.Entry::getValue).reduce(Integer::sum)
+		return sheet.entrySet().stream().filter(k -> k.getKey() > 6).map(Map.Entry::getValue).reduce(Integer::sum)
 				.orElse(0) + yahtzees * 100;
 	}
 
@@ -123,10 +128,32 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		return sheet.getOrDefault(i, 0);
 	}// TODO Auto-generated method stub
 
-	
 	@Override
 	public int compareTo(Scoresheet o) {
 		return getTotal() - o.getTotal();
 	}
 
+	private static final String line = "---------------------------------------";
+	private static final String lSep = "| ";
+	private static final String rSep = " |";
+	private static final String mSep = " : ";
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		Iterator it = Arrays.asList(Categories).iterator();
+		int i = 1;
+		while (it.hasNext()) {
+			sb.append(line);
+			sb.append(lSep);
+			sb.append("(");
+			sb.append(i++);
+			sb.append(") ");
+			sb.append(it.next());
+			sb.append(mSep);
+			sb.append(getScore(i));
+			sb.append(rSep);
+			sb.append(line);
+		}
+		return sb.toString();
+	}
 }

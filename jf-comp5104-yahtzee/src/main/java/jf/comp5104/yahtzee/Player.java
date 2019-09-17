@@ -33,4 +33,8 @@ public class Player {
 	public void setConnected(boolean b) {
 		connected = b;
 	}
+
+	public Scoresheet getScoresheet() {
+		return scoresheet;
+	}
 }
