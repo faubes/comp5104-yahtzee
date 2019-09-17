@@ -78,7 +78,7 @@ public class YahtzeeServer implements Runnable {
 		pool.execute(new MessageQueueHandler(this));
 
 		try {
-			while (shutdown) {
+			while (!shutdown) {
 				// listening for connections
 				Socket newClient = serverSocket.accept();
 				TCPConnection newConnection = new TCPConnection(newClient);
