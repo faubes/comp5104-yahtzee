@@ -38,13 +38,19 @@ public class GameTest {
 	}
 	
 	@Test
-	public Player testGetWinner() {
-		assertTrue("GetWinner returns a player", g.getWinner() instanceof Player);
+	public void testGetNumPlayers() {
+		assertEquals("New game has three players", g.getNumberOfPlayers(), 3);
 	}
 	
 	@Test
-	public Player getCurrentPlayer() {
+	public Player testGetWinner() {
+		assertTrue("GetWinner returns a player", g.getWinner() instanceof Player);
+		//TODO: actually test if the returned player has best score
+	}
+	
+	@Test
+	public Player testGetCurrentPlayer() {
 		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer() == p1);
 	}
-
+	
 }
