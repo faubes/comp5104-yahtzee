@@ -50,4 +50,29 @@ public class GameTest {
 		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer(), p1);
 	}
 	
+	@Test
+	public void testGetScoresheets() {
+		assertTrue("Can get players' scoresheets", g.getScoresheets() instanceof String);
+	}
+	
+	@Test
+	public void testCanPlayARound() {
+		g.start();
+		assertEquals("Round 1", g.getRound(), 1);
+		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer(), p1);
+		assertTrue("Game has started", g.hasStarted() && !g.hasEnded());
+		g.roll(p1);
+		g.score(p1, 1);
+		assertEquals("now returns Player 2", g.getCurrentPlayer(), p2);
+		g.roll(p2);
+//		g.reroll(p2, new int[]{1,2,3,4,5});
+		g.score(p2, 1);
+		assertEquals("now returns Player 3", g.getCurrentPlayer(), p3);
+		g.roll(p3);
+		g.score(p2, 1);
+		assertEquals("Round 2", g.getRound(), 2);
+		g.quit();
+		assertFalse("Game has ended", g.hasEnded());
+	}
+	
 }
