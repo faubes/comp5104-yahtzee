@@ -147,6 +147,7 @@ public class ScoresheetTest {
 	public void testToString() {
 		Roll yahtzee6 = new Roll(6,6,6,6,6);
 		s.score(yahtzee6, 13);
+		s.score(yahtzee6, 12);
 		System.out.println(s.toString());
 		assertTrue("String representation", s.toString() instanceof String);
 	}

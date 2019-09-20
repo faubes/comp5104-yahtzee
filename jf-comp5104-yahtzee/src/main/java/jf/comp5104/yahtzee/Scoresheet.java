@@ -133,26 +133,36 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		return getTotal() - o.getTotal();
 	}
 
-	private static final String line = "---------------------------------------";
+	private static final String line = "-------------------------------------------------------------------------------------------------";
 	private static final String lSep = "| ";
 	private static final String rSep = " |";
-	private static final String mSep = " : ";
+	private static final String mSep = " | ";
+	private static final String cSep = " : ";
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		Iterator<String> it = Arrays.asList(Categories).iterator();
 		int i = 1;
+		sb.append(line);
+		sb.append(Yahtzee.EOL);
+		sb.append(lSep);
 		while (it.hasNext()) {
-			sb.append(line);
-			sb.append(lSep);
 			sb.append("(");
 			sb.append(i++);
 			sb.append(") ");
 			sb.append(it.next());
-			sb.append(mSep);
+			sb.append(cSep);
 			sb.append(getScore(i));
-			sb.append(rSep);
-			sb.append(line);
+			if (i == 7 || i == 10 || i == 14) {
+				sb.append(rSep);		
+				sb.append(Yahtzee.EOL);
+				sb.append(line);
+				sb.append(Yahtzee.EOL);
+				sb.append(lSep);
+			}
+			else {
+				sb.append(mSep);				
+			}
 		}
 		return sb.toString();
 	}
