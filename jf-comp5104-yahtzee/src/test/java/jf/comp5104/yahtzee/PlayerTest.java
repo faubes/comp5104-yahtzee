@@ -4,29 +4,24 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-//import java.util.ArrayList;
-//import java.util.List;
-
 
 public class PlayerTest {
 
 	private Player p;
-	//private List<Player> l;
 	
 	@Before
 	public void setUp() {
 		p = new Player();
-		//List<Player> l = new ArrayList<Player>();
 	}
 	
 	@After
 	public void tearDown() {
-		//l = null; // destroy list
+		p = null; // destroy player
 	}
 
 	@Test
 	public void testPlayerDefaultConstructor() {
-		assertEquals("Default player name", "New Player", p.getName());
+		assertEquals("Default player name", "New Player 1", p.getName());
 	}
 
 	
@@ -62,6 +57,7 @@ public class PlayerTest {
 	
 	@Test
 	public void testPlayerCanReroll() {
+		p.roll();
 		p.reroll(1, 2, 3);
 		p.reroll(1);
 		assertTrue("Player can reroll the dice twice", p.getRoll() instanceof Roll);
@@ -69,6 +65,7 @@ public class PlayerTest {
 	
 	@Test
 	public void testPlayerCanScore() {
+		p.roll();
 		p.score(12);
 		assertTrue("Player records a score in Chance", p.getScore() > 0);
 	}

@@ -2,11 +2,7 @@ package jf.comp5104.yahtzee;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-
 import org.junit.Test;
-
-import jf.comp5104.yahtzee.net.YahtzeeServer;
 
 import org.junit.*;
 
@@ -16,7 +12,6 @@ public class GameTest {
 	private Player p1;
 	private Player p2;
 	private Player p3;
-	private YahtzeeServer server;
 	
 	@Before
 	public void setUp() {
@@ -58,6 +53,7 @@ public class GameTest {
 	@Test
 	public void testCanPlayARound() {
 		g.start();
+		assertFalse("Game has not yet ended", g.hasEnded());
 		assertEquals("Round 1", g.getRound(), 1);
 		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer(), p1);
 		assertTrue("Game has started", g.hasStarted() && !g.hasEnded());
@@ -69,10 +65,10 @@ public class GameTest {
 		g.score(p2, 1);
 		assertEquals("now returns Player 3", g.getCurrentPlayer(), p3);
 		g.roll(p3);
-		g.score(p2, 1);
+		g.score(p3, 1);
 		assertEquals("Round 2", g.getRound(), 2);
 		g.quit();
-		assertFalse("Game has ended", g.hasEnded());
+		assertTrue("Game has ended", g.hasEnded());
 	}
 	
 }

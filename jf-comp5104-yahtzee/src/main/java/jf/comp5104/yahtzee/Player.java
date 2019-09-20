@@ -14,7 +14,7 @@ public class Player implements Comparable<Player> {
 	}
 	
 	public Player() {
-		this("New Player " + (++playerCount));
+		this("New Player " + (playerCount++));
 	}
 
 	public String getName() {

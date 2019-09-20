@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 
-import jf.comp5104.yahtzee.net.YahtzeeServer;
 
 public class Game {
 
@@ -72,6 +71,7 @@ public class Game {
 	public void start() {
 		this.started = true;
 		this.finished = false;
+		this.round = 1;
 		
 	}
 
@@ -85,6 +85,25 @@ public class Game {
 
 	public void roll(Player p) {
 		p.roll();
+	}
+
+	public void score(Player p, int i) {
+		p.score(i);
+		endTurn();
+	}
+
+	public void quit() {
+		this.started = false;
+		this.finished = true;
+	}
+
+	public String getScoresheets() {
+		StringBuilder sb = new StringBuilder();
+		for (Player p : players) {
+			sb.append(p.getScoresheet().toString());
+			sb.append(Yahtzee.EOL);
+		}
+		return sb.toString();
 	}
 
 }
