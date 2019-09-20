@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Yahtzee;
 
@@ -34,6 +35,7 @@ public class YahtzeeServer implements Runnable {
 	private HashMap<Player, TCPConnection> playerSession;
 	protected boolean shutdown;
 	protected BlockingQueue<String> messageQueue;
+	private Game g; // maybe want to be able to host multiple games?
 
 	public YahtzeeServer(String hostname, int port, int poolSize) throws IOException {
 		// socket and info

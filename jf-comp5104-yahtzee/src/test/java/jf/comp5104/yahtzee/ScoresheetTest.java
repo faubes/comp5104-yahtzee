@@ -134,6 +134,7 @@ public class ScoresheetTest {
 		
 	}
 	
+	@Test
 	public void testScoresheetsAreComparable() {
 		Roll yahtzee6 = new Roll(6,6,6,6,6);
 		Roll nothing = new Roll(1,4,2,5,6);
@@ -142,4 +143,11 @@ public class ScoresheetTest {
 		assertTrue("Yahtzee is more points than nothing", s.compareTo(s2) > 0);
 	}
 
+	@Test
+	public void testToString() {
+		Roll yahtzee6 = new Roll(6,6,6,6,6);
+		s.score(yahtzee6, 13);
+		System.out.println(s.toString());
+		assertTrue("String representation", s.toString() instanceof String);
+	}
 }
