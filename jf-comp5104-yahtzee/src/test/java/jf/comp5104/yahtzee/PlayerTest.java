@@ -67,4 +67,9 @@ public class PlayerTest {
 		assertTrue("Player can reroll the dice twice", p.getRoll() instanceof Roll);
 	}
 	
+	@Test
+	public void testPlayerCanScore() {
+		p.score(12);
+		assertTrue("Player records a score in Chance", p.getScore() > 0);
+	}
 }
