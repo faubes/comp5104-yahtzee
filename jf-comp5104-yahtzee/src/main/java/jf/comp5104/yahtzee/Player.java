@@ -1,9 +1,8 @@
 package jf.comp5104.yahtzee;
 
-import jf.comp5104.yahtzee.net.TCPConnection;
-
 
 public class Player implements Comparable<Player> {
+	static private int playerCount = 0;
 	String username;
 	Scoresheet scoresheet;
 	Roll roll;
@@ -15,11 +14,15 @@ public class Player implements Comparable<Player> {
 	}
 	
 	public Player() {
-		this("New Player");
+		this("New Player " + (++playerCount));
 	}
 
 	public String getName() {
 		return username;
+	}
+	
+	public void setName(String name) {
+		this.username = name;
 	}
 
 	public int getScore() {
@@ -41,5 +44,24 @@ public class Player implements Comparable<Player> {
 	@Override
 	public int compareTo(Player o) {
 		return this.scoresheet.compareTo(o.getScoresheet());
+	}
+
+	public void roll() {
+		this.roll = new Roll();
+		
+	}
+
+	public void score(int i) {
+		scoresheet.score(roll, i);
+		
+	}
+
+	public void reroll(int ... is) {
+		roll.reroll(is);
+		
+	}
+
+	public Roll getRoll() {
+		return roll;
 	}
 }

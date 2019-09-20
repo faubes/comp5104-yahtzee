@@ -83,9 +83,8 @@ public class Game {
 		return this.finished;
 	}
 
-	public void roll(Player p1) {
-		
-		
+	public void roll(Player p) {
+		p.roll();
 	}
 
 }
