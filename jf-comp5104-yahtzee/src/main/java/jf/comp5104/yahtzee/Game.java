@@ -1,27 +1,29 @@
 package jf.comp5104.yahtzee;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
-
 
 import jf.comp5104.yahtzee.net.YahtzeeServer;
 
 public class Game {
 
-	YahtzeeServer server;
 	Deque<Player> players;
 	private boolean started;
 	private boolean finished;
 	private int round;
 	private int turnCount;
 	
-	Game (String name, YahtzeeServer server) {
-		this.server = server;
+	Game (String name) {
 		this.players = new ArrayDeque<Player>(5);
 		this.round = 0;		
 		this.turnCount = 0;
 		this.started = false;
 		this.finished = false;
+	}
+	
+	Game () {
+		this("Default Game");
 	}
 	
 	Player getCurrentPlayer() {
@@ -35,11 +37,6 @@ public class Game {
 			round++;
 	}
 	
-	void display() {
-		for (Player p : players) {
-			server.broadcast(p.getScoresheet().toString());
-		}
-	}
 
 	public void addPlayer(Player p) {
 		if (started) {
@@ -56,5 +53,19 @@ public class Game {
 	
 	public int getRound() {
 		return round;
+	}
+
+	public int getNumberOfPlayers() {
+		return players.size();
+	}
+
+	public ArrayList<Player> getPlayersSortedByScore() {
+		ArrayList<Player> playersSortedByScore = new ArrayList<Player>(players);
+		playersSortedByScore.sort(Player::compareTo);;
+		return playersSortedByScore;
+	}
+	public Player getWinner() {
+		// what about a tie?
+		return getPlayersSortedByScore().get(1);
 	}
 }

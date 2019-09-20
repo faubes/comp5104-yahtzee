@@ -20,13 +20,10 @@ public class GameTest {
 	
 	@Before
 	public void setUp() {
-		try {
-			server = new YahtzeeServer(3333, 10);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		g = new Game("Game 1", server);
+		g = new Game("Game 1");
+		p1 = new Player("Joe");
+		p2 = new Player("Jim");
+		p3 = new Player("Jerry");
 		g.addPlayer(p1);
 		g.addPlayer(p2);
 		g.addPlayer(p3);		
@@ -50,7 +47,7 @@ public class GameTest {
 	
 	@Test
 	public void testGetCurrentPlayer() {
-		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer() == p1);
+		assertEquals("Get Current Player returns Player 1", g.getCurrentPlayer(), p1);
 	}
 	
 }

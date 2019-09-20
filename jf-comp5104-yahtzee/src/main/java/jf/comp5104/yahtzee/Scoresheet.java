@@ -140,7 +140,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		Iterator it = Arrays.asList(Categories).iterator();
+		Iterator<String> it = Arrays.asList(Categories).iterator();
 		int i = 1;
 		while (it.hasNext()) {
 			sb.append(line);

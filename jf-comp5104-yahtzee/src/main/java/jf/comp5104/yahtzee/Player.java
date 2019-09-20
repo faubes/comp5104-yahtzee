@@ -3,7 +3,7 @@ package jf.comp5104.yahtzee;
 import jf.comp5104.yahtzee.net.TCPConnection;
 
 
-public class Player {
+public class Player implements Comparable<Player> {
 	String username;
 	Scoresheet scoresheet;
 	TCPConnection session; // should probably know own connection, right?
@@ -36,5 +36,10 @@ public class Player {
 
 	public Scoresheet getScoresheet() {
 		return scoresheet;
+	}
+
+	@Override
+	public int compareTo(Player o) {
+		return this.scoresheet.compareTo(o.getScoresheet());
 	}
 }
