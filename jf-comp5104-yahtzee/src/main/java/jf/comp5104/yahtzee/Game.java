@@ -68,4 +68,24 @@ public class Game {
 		// what about a tie?
 		return getPlayersSortedByScore().get(1);
 	}
+
+	public void start() {
+		this.started = true;
+		this.finished = false;
+		
+	}
+
+	public boolean hasStarted() {
+		return this.started;
+	}
+
+	public boolean hasEnded() {
+		return this.finished;
+	}
+
+	public void roll(Player p1) {
+		
+		
+	}
+
 }

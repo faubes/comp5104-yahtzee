@@ -6,7 +6,7 @@ import jf.comp5104.yahtzee.net.TCPConnection;
 public class Player implements Comparable<Player> {
 	String username;
 	Scoresheet scoresheet;
-	TCPConnection session; // should probably know own connection, right?
+	Roll roll;
 	private boolean connected;
 
 	public Player(String username) {
