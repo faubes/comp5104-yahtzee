@@ -54,4 +54,17 @@ public class PlayerTest {
 		assertTrue("Some kind of String", p.toString() instanceof String);
 	}
 	
+	@Test
+	public void testPlayerCanRoll() {
+		p.roll();
+		assertTrue("Player can roll the dice", p.getRoll() instanceof Roll);
+	}
+	
+	@Test
+	public void testPlayerCanReroll() {
+		p.reroll(1, 2, 3);
+		p.reroll(1);
+		assertTrue("Player can reroll the dice twice", p.getRoll() instanceof Roll);
+	}
+	
 }
