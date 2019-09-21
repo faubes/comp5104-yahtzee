@@ -29,7 +29,7 @@ public class Game {
 		this("Default Game");
 	}
 	
-	Player getCurrentPlayer() {
+	public Player getCurrentPlayer() {
 		return players.peek();
 	}
 	

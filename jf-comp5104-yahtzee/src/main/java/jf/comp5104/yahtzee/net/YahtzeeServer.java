@@ -32,9 +32,10 @@ public class YahtzeeServer implements Runnable {
 	private MessageQueueHandler messageQueueHandler;
 	private ArrayList<TCPConnection> clients;
 	private ArrayList<ClientHandler> clientHandlers;
-	private HashMap<Player, TCPConnection> playerSession;
+	private HashMap<Player, TCPConnection> playerSessionMap;
+	private HashMap<TCPConnection, Player> sessionPlayerMap;
 	protected boolean shutdown;
-	protected BlockingQueue<String> messageQueue;
+	protected BlockingQueue<Message> messageQueue;
 	private Game g; // maybe want to be able to host multiple games?
 
 	public YahtzeeServer(String hostname, int port, int poolSize) throws IOException {
@@ -45,7 +46,7 @@ public class YahtzeeServer implements Runnable {
 		// thread executor
 		this.pool = Executors.newFixedThreadPool(poolSize);
 		// thread safe structure
-		this.messageQueue = new LinkedBlockingQueue<String>();
+		this.messageQueue = new LinkedBlockingQueue<Message>();
 		// list of client handling threads
 		this.clientHandlers = new ArrayList<ClientHandler>(10);
 		// list of clients
@@ -53,7 +54,7 @@ public class YahtzeeServer implements Runnable {
 		// thread for processing messageQ
 		this.messageQueueHandler = new MessageQueueHandler(this);
 		this.shutdown = false;
-		
+
 		System.out.println("Server socket " + hostName + " : " + port);
 
 	}
@@ -69,7 +70,7 @@ public class YahtzeeServer implements Runnable {
 	@Override
 	public void run() {
 		int port = getPort();
-		
+
 		System.out.println("Server listening on port " + port);
 		// start message handling service
 		pool.execute(messageQueueHandler);
@@ -85,7 +86,8 @@ public class YahtzeeServer implements Runnable {
 				clients.add(newConnection);
 				// create new player and add to session map
 				Player p = new Player();
-				playerSession.put(p, newConnection);				
+				playerSessionMap.put(p, newConnection);
+				sessionPlayerMap.put(newConnection, p);
 				// ClientHandler gets input from client, adds to messageQ
 				ClientHandler clientHandler = new ClientHandler(newConnection, this);
 				clientHandlers.add(clientHandler);
@@ -145,15 +147,29 @@ public class YahtzeeServer implements Runnable {
 	}
 
 	public void stop() {
-		shutdown();		
+		shutdown();
 	}
 
+	
+	public void broadcast(Message msg) {
+		for (TCPConnection c : clients) {
+			// System.out.println("Broadcasting to " + c.getId());
+			if (c == msg.getSender()) {
+				c.send("You say: " + msg.toString());
+			} else {
+				c.send(sessionPlayerMap.get(c).getName() + " says: " + msg.toString());
+			}
+		}
+	}
+
+	// direct from server, no client session attached to message
 	public void broadcast(String str) {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
-			c.send(str);
+				c.send(str);
+			}
 		}
-	}
+
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -178,6 +194,25 @@ public class YahtzeeServer implements Runnable {
 		return sb.toString();
 	}
 
+	// nested class Message encapsulates client and string message
+
+	class Message {
+		private TCPConnection sender;
+		private String text;
+
+		Message(TCPConnection c, String s) {
+			this.sender = c;
+			this.text = s;
+		}
+
+		public TCPConnection getSender() {
+			return sender;
+		}
+
+		public String toString() {
+			return text;
+		}
+	}
 
 	// nested MessageQueue class polls the queue and broadcasts to all clients
 	class MessageQueueHandler implements Runnable {
@@ -193,7 +228,7 @@ public class YahtzeeServer implements Runnable {
 		void setShutdown(boolean b) {
 			this.shutdown = b;
 		}
-		
+
 		public void run() {
 			System.out.println("Listening for messages");
 			while (!shutdown) {
@@ -204,15 +239,44 @@ public class YahtzeeServer implements Runnable {
 						Thread.sleep(5000);
 					} else {
 						// System.out.println("take message from q");
-						String msg = server.messageQueue.take();
+						Message msg = server.messageQueue.take();
+						processMessage(msg);
 						// System.out.println(msg);
-						server.broadcast(msg);
 					}
 				} catch (InterruptedException e) {
 					System.err.println("Error in receive Msg?");
 				}
 			}
 		}
+
+		private void processMessage(Message msg) {
+			if (msg.text.isEmpty() || msg.text == null) {
+				return;
+			}
+			if (msg.text.toLowerCase().startsWith("say")) {
+				server.broadcast(msg);
+			}
+			if (msg.text.toLowerCase().startsWith("start")) {
+				if (g.hasStarted()) {
+					respond(msg, "Game has already started.");
+					return;
+				} else {
+				g.start();
+				server.broadcast("Game has begun!");
+				server.broadcast(g.toString());
+				sendToCurrentPlayer(g.promptPlayer());
+				}
+			}
+		}
+		// respond to a message from sender with string
+		private void respond(Message msg, String string) {
+			msg.getSender().send(string);
+		}
+
+		private void sendToCurrentPlayer(String string) {
+			Player cur = g.getCurrentPlayer();
+			playerSessionMap.get(cur).send(string);
+		}		
 	}
 
 	class ClientHandler implements Runnable {
@@ -239,7 +303,7 @@ public class YahtzeeServer implements Runnable {
 				inputLine = session.receive();
 				// send command to server through queue
 				// System.out.println("Adding message " + inputLine);
-				server.messageQueue.add(inputLine);
+				server.messageQueue.add(new Message(session, inputLine));
 				// System.out.println("message added to queue");
 				// received exit command
 				if (shutdown) {
