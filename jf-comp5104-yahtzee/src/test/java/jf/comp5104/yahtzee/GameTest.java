@@ -67,8 +67,18 @@ public class GameTest {
 		g.roll(p3);
 		g.score(p3, 1);
 		assertEquals("Round 2", g.getRound(), 2);
+		assertEquals("Back to Player 1", g.getCurrentPlayer(), p1);
 		g.quit();
 		assertTrue("Game has ended", g.hasEnded());
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testPlayerCanReroll() {
+		g.start();
+		g.roll(p1);
+		g.reroll();
+		g.reroll(2,3);
+		g.reroll(5); // can't reroll three times
 	}
 	
 }
