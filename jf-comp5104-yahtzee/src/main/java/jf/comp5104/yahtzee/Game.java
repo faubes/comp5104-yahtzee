@@ -105,8 +105,9 @@ public class Game {
 		return this.finished;
 	}
 
-	public void roll(Player p) {
+	public void roll(Player p) {		
 		p.roll();
+		rollCount++;
 	}
 
 	public void score(Player p, int i) {
@@ -133,13 +134,29 @@ public class Game {
 	}
 	
 	public void reroll(Player p, int...is) {
-		if (rollCount >= 2) {
+		if (rollCount >= 3) {
 			throw new IllegalStateException("Cannot reroll more than twice");
 		}
 	p.reroll(is);
 	rollCount++;
 	}
 	
+	public String promptPlayer(Player p) {
+		if (p != getCurrentPlayer()) {
+			return "It's not your turn" + Yahtzee.EOL +
+					"Please wait for " + getCurrentPlayer().getName() +
+					"to finish!" + Yahtzee.EOL;
+		}
+		if (rollCount == 0) {
+			return "Press Enter to Roll!" + Yahtzee.EOL;
+		}
+		if (rollCount >= 1 && rollCount <= 2) {
+			return "(1) Reroll everything" + Yahtzee.EOL +
+			"(2) Reroll by index" + Yahtzee.EOL +
+			"(3) Score" + Yahtzee.EOL;
+		}
+		else return "(3) Score" + Yahtzee.EOL;
+	}
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Game: ");

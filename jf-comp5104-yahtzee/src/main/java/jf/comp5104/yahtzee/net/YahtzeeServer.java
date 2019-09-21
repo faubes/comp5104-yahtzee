@@ -264,7 +264,7 @@ public class YahtzeeServer implements Runnable {
 				g.start();
 				server.broadcast("Game has begun!");
 				server.broadcast(g.toString());
-				sendToCurrentPlayer(g.promptPlayer());
+				sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
 				}
 			}
 		}

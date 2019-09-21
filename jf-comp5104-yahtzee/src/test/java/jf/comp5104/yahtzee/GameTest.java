@@ -104,7 +104,7 @@ public class GameTest {
 	public void testPromptPlayerToRoll() {
 		g.start();
 		assertEquals("Game asks player to start turn",
-				g.promptPlayer(),
+				g.promptPlayer(p1),
 				"Press ENTER to Roll!");
 	}
 	
@@ -113,7 +113,7 @@ public class GameTest {
 		g.start();
 		g.roll(p1);
 		assertEquals("Game asks player to choose action",
-				g.promptPlayer(),
+				g.promptPlayer(p1),
 				"(1) Reroll everything" + Yahtzee.EOL +
 				"(2) Reroll by index" + Yahtzee.EOL +
 				"(3) Score" + Yahtzee.EOL);		
