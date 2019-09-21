@@ -131,7 +131,7 @@ public class ScoresheetTest {
 		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 		assertEquals("Total of lower section: 0", s.getLowerTotal(), 35);
 		assertEquals("Total:", s.getTotal(), 35);
-		
+		System.out.println(s.toString());
 	}
 	
 	@Test
@@ -148,7 +148,7 @@ public class ScoresheetTest {
 		Roll yahtzee6 = new Roll(6,6,6,6,6);
 		s.score(yahtzee6, 13);
 		s.score(yahtzee6, 12);
-		System.out.println(s.toString());
+		//System.out.println(s.toString());
 		assertTrue("String representation", s.toString() instanceof String);
 	}
 }

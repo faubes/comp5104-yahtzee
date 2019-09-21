@@ -42,7 +42,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		if (i != 13 && sheet.containsKey(i))
 			throw new IllegalArgumentException("Already scored in that category");
 		if (i == 13 && sheet.containsKey(i)) {
-			// another Yathzee
+			// another Yathzee?
 			yahtzees++;
 			return;
 		}
@@ -148,12 +148,34 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		sb.append(lSep);
 		while (it.hasNext()) {
 			sb.append("(");
-			sb.append(i++);
+			sb.append(i);
 			sb.append(") ");
 			sb.append(it.next());
 			sb.append(cSep);
 			sb.append(getScore(i));
-			if (i == 7 || i == 10 || i == 14) {
+			if (i == 6 ) {
+				sb.append(rSep);		
+				sb.append(Yahtzee.EOL);
+				sb.append(line);
+				sb.append(Yahtzee.EOL);
+				sb.append(lSep);
+				sb.append("Top Sub-Total");
+				sb.append(cSep);
+				sb.append(this.getUpperTotal1());
+				sb.append(mSep);
+				sb.append("Top Bonus");
+				sb.append(cSep);
+				sb.append(bonus ? 35 : 0);
+				sb.append(mSep);
+				sb.append("Top Total");
+				sb.append(cSep);
+				sb.append(this.getUpperTotal2());
+				sb.append(rSep);
+				sb.append(Yahtzee.EOL);
+				sb.append(line);
+				sb.append(Yahtzee.EOL);
+				sb.append(lSep);
+			} else if (i == 9 || i == 14) {
 				sb.append(rSep);		
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
@@ -163,7 +185,10 @@ public class Scoresheet implements Comparable<Scoresheet> {
 			else {
 				sb.append(mSep);				
 			}
+			i++;
 		}
+		sb.append(line);
+		sb.append(Yahtzee.EOL);
 		return sb.toString();
 	}
 }
