@@ -114,7 +114,7 @@ public class Game {
 	}
 	
 	public void reroll(Player p, int...is) {
-		if (rollCount > 2) {
+		if (rollCount >= 2) {
 			throw new IllegalStateException("Cannot reroll more than twice");
 		}
 	p.reroll(is);
