@@ -81,4 +81,23 @@ public class GameTest {
 		g.reroll(p1, 5); // can't reroll three times
 	}
 	
+	
+	@Test
+	public void testPlay13Rounds() {
+		g.start();
+		for (int i =1; i <= 13; i++) {
+			assertEquals("Player 1's turn", g.getCurrentPlayer(), p1);
+			g.roll(p1);
+			g.score(p1, i);
+			assertEquals("now returns Player 2", g.getCurrentPlayer(), p2);
+			g.roll(p2);
+			g.score(p2, i);
+			assertEquals("now returns Player 3", g.getCurrentPlayer(), p3);
+			g.roll(p3);
+			g.score(p3, i);
+		}
+		System.out.println(g.toString());
+		assertTrue("Game finished", g.hasEnded());
+		System.out.println("Winner is " + g.getWinner().toString());
+	}
 }
