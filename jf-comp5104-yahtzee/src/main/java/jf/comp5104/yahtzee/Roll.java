@@ -36,9 +36,10 @@ public class Roll {
 		if (is.length > 5)
 			throw new IllegalStateException("Cannot reroll more than 5 dice.");
 		for (int i : is) {
-			if (i < 1 || i > 6)
+			if (i < 1 || i > 6) {
 				throw new IllegalStateException("Invalid index for reroll");
-			diceList.get(i).roll();
+			}
+			diceList.get(i-1).roll();
 		}
 		computeFrequency();
 	}

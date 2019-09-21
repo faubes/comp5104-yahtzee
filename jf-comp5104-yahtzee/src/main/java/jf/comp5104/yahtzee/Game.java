@@ -12,6 +12,7 @@ public class Game {
 	private boolean finished;
 	private int round;
 	private int turnCount;
+	private int rollCount;
 	
 	Game (String name) {
 		this.players = new ArrayDeque<Player>(5);
@@ -19,6 +20,7 @@ public class Game {
 		this.turnCount = 0;
 		this.started = false;
 		this.finished = false;
+		this.rollCount = 0;
 	}
 	
 	Game () {
@@ -31,6 +33,7 @@ public class Game {
 	
 	void endTurn() {
 		players.addLast(players.pollFirst()); // move player to end of the deque
+		rollCount = 0; // reset reroll counter
 		turnCount++;
 		if (turnCount % players.size() == 0) 
 			round++;
@@ -106,4 +109,15 @@ public class Game {
 		return sb.toString();
 	}
 
+	public void reroll(Player p) {
+		reroll(p, 1,2,3,4,5);
+	}
+	
+	public void reroll(Player p, int...is) {
+		if (rollCount > 2) {
+			throw new IllegalStateException("Cannot reroll more than twice");
+		}
+	p.reroll(is);
+	rollCount++;
+	}
 }

@@ -76,9 +76,9 @@ public class GameTest {
 	public void testPlayerCanReroll() {
 		g.start();
 		g.roll(p1);
-		g.reroll();
-		g.reroll(2,3);
-		g.reroll(5); // can't reroll three times
+		g.reroll(p1);
+		g.reroll(p1, 2,3);
+		g.reroll(p1, 5); // can't reroll three times
 	}
 	
 }
