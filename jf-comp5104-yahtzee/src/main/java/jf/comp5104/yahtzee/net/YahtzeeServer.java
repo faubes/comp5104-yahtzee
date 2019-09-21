@@ -54,6 +54,9 @@ public class YahtzeeServer implements Runnable {
 		// thread for processing messageQ
 		this.messageQueueHandler = new MessageQueueHandler(this);
 		this.shutdown = false;
+		
+		this.playerSessionMap = new HashMap<Player, TCPConnection>();
+		this.sessionPlayerMap = new HashMap<TCPConnection, Player>();
 
 		System.out.println("Server socket " + hostName + " : " + port);
 
@@ -155,9 +158,9 @@ public class YahtzeeServer implements Runnable {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
 			if (c == msg.getSender()) {
-				c.send("You say: " + msg.toString());
+				c.send("You: " + msg.toString());
 			} else {
-				c.send(sessionPlayerMap.get(c).getName() + " says: " + msg.toString());
+				c.send(sessionPlayerMap.get(c).getName() + ": " + msg.toString());
 			}
 		}
 	}
@@ -253,8 +256,8 @@ public class YahtzeeServer implements Runnable {
 			if (msg.text.isEmpty() || msg.text == null) {
 				return;
 			}
-			if (msg.text.toLowerCase().startsWith("say")) {
-				server.broadcast(msg);
+			if (msg.text.toLowerCase().startsWith("say ")) {
+				server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
 			}
 			if (msg.text.toLowerCase().startsWith("start")) {
 				if (g.hasStarted()) {

@@ -97,10 +97,10 @@ public class YahtzeeClient implements Runnable {
 				}
 				// System.out.println("Listening for server");
 				fromServer = session.receive();
-				System.out.println("Server: " + fromServer);
+				System.out.println(fromServer);
 				
 				if ("Bye".equalsIgnoreCase(fromServer)) {
-					
+					client.stop();
 					break;
 				}
 

@@ -105,7 +105,7 @@ public class GameTest {
 		g.start();
 		assertEquals("Game asks player to start turn",
 				g.promptPlayer(p1),
-				"Press ENTER to Roll!");
+				"Press ENTER to Roll!" + Yahtzee.EOL);
 	}
 	
 	@Test

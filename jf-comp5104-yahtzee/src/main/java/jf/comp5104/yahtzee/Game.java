@@ -148,7 +148,7 @@ public class Game {
 					"to finish!" + Yahtzee.EOL;
 		}
 		if (rollCount == 0) {
-			return "Press Enter to Roll!" + Yahtzee.EOL;
+			return "Press ENTER to Roll!" + Yahtzee.EOL;
 		}
 		if (rollCount >= 1 && rollCount <= 2) {
 			return "(1) Reroll everything" + Yahtzee.EOL +
