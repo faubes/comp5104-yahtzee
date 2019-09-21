@@ -99,4 +99,23 @@ public class GameTest {
 		System.out.println(g.toString());
 		assertTrue("Game finished", g.hasEnded());
 	}
+	
+	@Test
+	public void testPromptPlayerToRoll() {
+		g.start();
+		assertEquals("Game asks player to start turn",
+				g.promptPlayer(),
+				"Press ENTER to Roll!");
+	}
+	
+	@Test
+	public void testPromptPlayerAfterRoll() {
+		g.start();
+		g.roll(p1);
+		assertEquals("Game asks player to choose action",
+				g.promptPlayer(),
+				"(1) Reroll everything" + Yahtzee.EOL +
+				"(2) Reroll by index" + Yahtzee.EOL +
+				"(3) Score" + Yahtzee.EOL);		
+	}
 }
