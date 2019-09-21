@@ -7,6 +7,7 @@ import java.util.Deque;
 
 public class Game {
 
+	String gameName;
 	Deque<Player> players;
 	private boolean started;
 	private boolean finished;
@@ -15,6 +16,7 @@ public class Game {
 	private int rollCount;
 	
 	Game (String name) {
+		this.gameName = name;
 		this.players = new ArrayDeque<Player>(5);
 		this.round = 0;		
 		this.turnCount = 0;
@@ -35,10 +37,21 @@ public class Game {
 		players.addLast(players.pollFirst()); // move player to end of the deque
 		rollCount = 0; // reset reroll counter
 		turnCount++;
-		if (turnCount % players.size() == 0) 
+		if (turnCount % players.size() == 0) { 
 			round++;
+		}
+		if (round > 13) {
+			stop();
+		}
 	}
 	
+	public void setName(String name) {
+		this.gameName= name;
+	}
+	
+	public String getName() {
+		return this.gameName;
+	}
 
 	public void addPlayer(Player p) {
 		if (started) {
@@ -77,6 +90,12 @@ public class Game {
 		this.round = 1;
 		
 	}
+	
+	public void stop() {
+		this.started = false;
+		this.finished = true;
+		this.round = 0;
+	}
 
 	public boolean hasStarted() {
 		return this.started;
@@ -108,7 +127,7 @@ public class Game {
 		}
 		return sb.toString();
 	}
-
+	
 	public void reroll(Player p) {
 		reroll(p, 1,2,3,4,5);
 	}
@@ -120,4 +139,20 @@ public class Game {
 	p.reroll(is);
 	rollCount++;
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Game: ");
+		sb.append(this.getName());
+		sb.append(Yahtzee.EOL);
+		sb.append(getScoresheets());
+		sb.append(Yahtzee.EOL);
+		if (hasEnded()) {
+			sb.append("Winner is: ");
+			sb.append(getWinner());
+			sb.append(Yahtzee.EOL);
+		}
+		return sb.toString();
+	}
+
 }

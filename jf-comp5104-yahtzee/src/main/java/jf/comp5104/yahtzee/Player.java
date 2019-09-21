@@ -64,4 +64,13 @@ public class Player implements Comparable<Player> {
 	public Roll getRoll() {
 		return roll;
 	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder(getName());
+		sb.append(" (");
+		sb.append(getScore());
+		sb.append(")");
+		sb.append(Yahtzee.EOL);
+		return sb.toString();
+	}
 }

@@ -146,6 +146,15 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		sb.append(line);
 		sb.append(Yahtzee.EOL);
 		sb.append(lSep);
+		sb.append("Player Name");
+		sb.append(cSep);
+		sb.append(getName());
+		sb.append(rSep);
+		sb.append(Yahtzee.EOL);
+		sb.append(line);
+		sb.append(Yahtzee.EOL);
+
+		sb.append(lSep);
 		while (it.hasNext()) {
 			sb.append("(");
 			sb.append(i);

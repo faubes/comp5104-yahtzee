@@ -98,6 +98,5 @@ public class GameTest {
 		}
 		System.out.println(g.toString());
 		assertTrue("Game finished", g.hasEnded());
-		System.out.println("Winner is " + g.getWinner().toString());
 	}
 }
