@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import jf.comp5104.yahtzee.Game;
+import jf.comp5104.yahtzee.Game.InputGameState;
 import jf.comp5104.yahtzee.NotYourTurnException;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Yahtzee;
@@ -281,10 +282,23 @@ public class YahtzeeServer implements Runnable {
 					g.reroll(p, rerollIndex);
 					server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 					server.broadcast(g.getCurrentPlayer().getRoll().toString());
-					g.setAwaitingIndexSet(false);
+					g.setInputState(InputGameState.NEEDCOMMAND);
 					sendToCurrentPlayer(g.promptPlayer(p));
 					return;
 				}
+				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingCategory()) {
+					int[] rerollIndex = cmd.getRerollIndicies()
+							.stream()
+							.mapToInt(Integer::intValue)
+							.toArray();
+					g.score(p, rerollIndex[0]);
+					server.broadcast(p.getName() + " scores in category " + rerollIndex[0]);
+					g.setInputState(InputGameState.NEEDCOMMAND);
+					server.broadcast(g.toString());
+					sendToCurrentPlayer(g.promptPlayer(p));
+					return;
+				}
+				
 				switch (cmd) {
 				case SAY:
 					server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
@@ -318,7 +332,13 @@ public class YahtzeeServer implements Runnable {
 					break;
 				case REROLLSOME:
 					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-						g.setAwaitingIndexSet(true);
+						g.setInputState(InputGameState.NEEDINDEXSET);
+						sendToCurrentPlayer(g.promptPlayer(p));
+					}
+					break;
+				case SCORE:
+					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
+						g.setInputState(InputGameState.NEEDCATEGORY);
 						sendToCurrentPlayer(g.promptPlayer(p));
 					}
 					break;

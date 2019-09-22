@@ -184,20 +184,23 @@ public class Scoresheet implements Comparable<Scoresheet> {
 				sb.append(line);
 				sb.append(Yahtzee.EOL);
 				sb.append(lSep);
-			} else if (i == 9 || i == 14) {
+			} else if (i == 9) {
 				sb.append(rSep);		
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
 				sb.append(Yahtzee.EOL);
 				sb.append(lSep);
 			}
+			else if (i == 13) {
+				sb.append(Yahtzee.EOL);
+				sb.append(line);
+				sb.append(Yahtzee.EOL);				
+			}
 			else {
 				sb.append(mSep);				
 			}
 			i++;
 		}
-		sb.append(line);
-		sb.append(Yahtzee.EOL);
 		return sb.toString();
 	}
 }

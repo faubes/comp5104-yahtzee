@@ -8,6 +8,13 @@ import java.util.Set;
 
 public class Game {
 
+	public static enum InputGameState {
+		NEEDINDEXSET,
+		NEEDCATEGORY,
+		NEEDCOMMAND
+	};
+	
+	
 	String gameName;
 	Deque<Player> players;
 	private boolean started;
@@ -16,6 +23,7 @@ public class Game {
 	private int round;
 	private int turnCount;
 	private int rollCount;
+	private InputGameState inputState;
 
 	public Game(String name) {
 		this.gameName = name;
@@ -70,6 +78,14 @@ public class Game {
 		}
 	}
 
+	public void setInputState(InputGameState s) {
+		this.inputState = s;
+	}
+	
+	public InputGameState getInputState() {
+		return this.inputState;
+	}
+	
 	public void removePlayer(Player p) {
 		players.remove(p);
 	}
@@ -114,12 +130,12 @@ public class Game {
 		return this.finished;
 	}
 
-	public void setAwaitingIndexSet(boolean b) {
- 		this.awaitingIndexSet = b;
-	}
-	
 	public boolean isAwaitingIndexSet() {
-		return this.awaitingIndexSet;
+		return this.inputState == InputGameState.NEEDINDEXSET;
+	}
+
+	public boolean isAwaitingCategory() {
+		return this.inputState == InputGameState.NEEDCATEGORY;
 	}
 	public boolean isCurrentPlayer(Player p) throws NotYourTurnException {
 		if (p != getCurrentPlayer()) {
@@ -170,10 +186,13 @@ public class Game {
 	public String promptPlayer(Player p) {
 		if (p != getCurrentPlayer()) {
 			return "It's not your turn" + Yahtzee.EOL + "Please wait for " + getCurrentPlayer().getName() + "to finish!"
-					+ Yahtzee.EOL;
+					+ Yahtzee.EOL; 
 		}
-		if (awaitingIndexSet) {
+		if (getInputState() == InputGameState.NEEDINDEXSET) {
 			return "Please enter the dice position that you want to hold. Please separate each number with a <<SPACE>>";
+		}
+		if (getInputState() == InputGameState.NEEDCATEGORY) {
+			return "What category do you want to score this round against?";
 		}
 		if (rollCount == 0) {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
