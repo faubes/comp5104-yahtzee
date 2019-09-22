@@ -23,6 +23,7 @@ public class Player implements Comparable<Player> {
 	
 	public void setName(String name) {
 		this.username = name;
+		this.scoresheet.setName(name);
 	}
 
 	public int getScore() {

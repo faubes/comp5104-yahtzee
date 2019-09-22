@@ -189,10 +189,10 @@ public class YahtzeeServer implements Runnable {
 		}
 		return null;
 	}
-	
+
 	public void addMessage(TCPConnection c, String str) {
 		messageQueue.add(new Message(c, str));
-		}
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -275,16 +275,13 @@ public class YahtzeeServer implements Runnable {
 			if (msg.text == null) {
 				return;
 			}
-			
+
 			Command cmd = Command.getCommandFromString(msg.text);
 			Player p = sessionPlayerMap.get(msg.getSender());
-			
+
 			try {
 				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingIndexSet()) {
-					int[] rerollIndex = cmd.getRerollIndicies()
-							.stream()
-							.mapToInt(Integer::intValue)
-							.toArray();
+					int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
 					g.reroll(p, rerollIndex);
 					server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 					server.broadcast(g.getCurrentPlayer().getRoll().toString());
@@ -293,10 +290,7 @@ public class YahtzeeServer implements Runnable {
 					return;
 				}
 				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingCategory()) {
-					int[] rerollIndex = cmd.getRerollIndicies()
-							.stream()
-							.mapToInt(Integer::intValue)
-							.toArray();
+					int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
 					g.score(p, rerollIndex[0]);
 					server.broadcast(p.getName() + " scores in category " + rerollIndex[0]);
 					g.setInputState(InputGameState.NEEDCOMMAND);
@@ -304,10 +298,18 @@ public class YahtzeeServer implements Runnable {
 					sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
 					return;
 				}
-				
+
 				switch (cmd) {
 				case SAY:
 					server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
+					break;
+				case NAME:
+					String[] split = msg.text.split(" ");
+					if (split.length != 2) {
+						respond(msg, "Syntax: name <newname>");
+						break;
+					}
+					p.setName(split[1]);
 					break;
 				case START:
 					if (hasGameStarted()) {
@@ -330,7 +332,7 @@ public class YahtzeeServer implements Runnable {
 					break;
 				case REROLLALL:
 					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-						g.reroll(p, 1,2,3,4,5);
+						g.reroll(p, 1, 2, 3, 4, 5);
 						server.broadcast(p.getName() + " rerolls everything!");
 						server.broadcast(g.getCurrentPlayer().getRoll().toString());
 						sendToCurrentPlayer(g.promptPlayer(p));
@@ -349,18 +351,16 @@ public class YahtzeeServer implements Runnable {
 					}
 					break;
 				default:
-					//do nothing
+					// do nothing
 					break;
 				}
 			} catch (NotYourTurnException e) {
 				respond(msg, "It's not your turn.");
-			}
-			catch (AlreadyScoredThereException e) {
+			} catch (AlreadyScoredThereException e) {
 				respond(msg, "You've already scored in that category.");
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				sendToCurrentPlayer(g.promptPlayer(p));
-			}
-			catch (IndexOutOfBoundsException e) {
+			} catch (IndexOutOfBoundsException e) {
 				respond(msg, "That is not a valid category. Choose 1-13.");
 				sendToCurrentPlayer(g.promptPlayer(p));
 			}

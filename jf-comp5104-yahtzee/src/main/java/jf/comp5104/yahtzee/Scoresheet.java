@@ -203,4 +203,8 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		}
 		return sb.toString();
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

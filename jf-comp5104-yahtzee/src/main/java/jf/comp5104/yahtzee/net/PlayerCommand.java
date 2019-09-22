@@ -11,7 +11,8 @@ public class PlayerCommand {
 
 	static enum Command {
 		// inactive commands
-		INVALID("invalid"), ENTER(""), SAY("say"), START("start"), STOP("stop"),
+		INVALID("invalid"), ENTER(""), SAY("say"), NAME("name"),
+		START("start"), STOP("stop"),
 		// active commands
 		REROLLALL("1"), REROLLSOME("2"), SCORE("3");
 
