@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import jf.comp5104.yahtzee.AlreadyScoredThereException;
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Game.InputGameState;
 import jf.comp5104.yahtzee.NotYourTurnException;
@@ -157,13 +158,14 @@ public class YahtzeeServer implements Runnable {
 		shutdown();
 	}
 
+	// distinguish output for owned event
 	public void broadcast(Message msg) {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
 			if (c == msg.getSender()) {
 				c.send("You: " + msg.toString());
 			} else {
-				c.send(sessionPlayerMap.get(c).getName() + ": " + msg.toString());
+				c.send(sessionPlayerMap.get(msg.getSender()).getName() + ": " + msg.toString());
 			}
 		}
 	}
@@ -171,7 +173,7 @@ public class YahtzeeServer implements Runnable {
 	// direct from server, no client session attached to message
 	public void broadcast(String str) {
 		for (TCPConnection c : clients) {
-			// System.out.println("Broadcasting to " + c.getId());
+			// System.out.printlnmessageQueue("Broadcasting to " + c.getId());
 			c.send(str);
 		}
 
@@ -187,6 +189,10 @@ public class YahtzeeServer implements Runnable {
 		}
 		return null;
 	}
+	
+	public void addMessage(TCPConnection c, String str) {
+		messageQueue.add(new Message(c, str));
+		}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -272,7 +278,7 @@ public class YahtzeeServer implements Runnable {
 			
 			Command cmd = Command.getCommandFromString(msg.text);
 			Player p = sessionPlayerMap.get(msg.getSender());
-				
+			
 			try {
 				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingIndexSet()) {
 					int[] rerollIndex = cmd.getRerollIndicies()
@@ -295,7 +301,7 @@ public class YahtzeeServer implements Runnable {
 					server.broadcast(p.getName() + " scores in category " + rerollIndex[0]);
 					g.setInputState(InputGameState.NEEDCOMMAND);
 					server.broadcast(g.toString());
-					sendToCurrentPlayer(g.promptPlayer(p));
+					sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
 					return;
 				}
 				
@@ -306,12 +312,12 @@ public class YahtzeeServer implements Runnable {
 				case START:
 					if (hasGameStarted()) {
 						respond(msg, "Game has already started.");
-						return;
+						break;
 					} else {
 						g = new Game(playerSessionMap.keySet()).start();
 						server.broadcast("Game has begun!");
 						server.broadcast(g.toString());
-						sendToCurrentPlayer(g.promptPlayer(p));
+						sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
 					}
 					break;
 				case ENTER:
@@ -348,6 +354,15 @@ public class YahtzeeServer implements Runnable {
 				}
 			} catch (NotYourTurnException e) {
 				respond(msg, "It's not your turn.");
+			}
+			catch (AlreadyScoredThereException e) {
+				respond(msg, "You've already scored in that category.");
+				g.setInputState(InputGameState.NEEDCOMMAND);
+				sendToCurrentPlayer(g.promptPlayer(p));
+			}
+			catch (IndexOutOfBoundsException e) {
+				respond(msg, "That is not a valid category. Choose 1-13.");
+				sendToCurrentPlayer(g.promptPlayer(p));
 			}
 		}
 
@@ -390,7 +405,7 @@ public class YahtzeeServer implements Runnable {
 				inputLine = session.receive();
 				// send command to server through queue
 				// System.out.println("Adding message " + inputLine);
-				server.messageQueue.add(new Message(session, inputLine));
+				server.addMessage(session, inputLine);
 				// System.out.println("message added to queue");
 				// received exit command
 				if (shutdown) {

@@ -58,11 +58,6 @@ public class YahtzeeClient implements Runnable {
 			try {
 				userInput = stdIn.readLine();
 				// System.out.println("Client input: " + userInput);
-				if (userInput == null) {
-					System.out.println("Lost connection to server.");
-					shutdown=true;
-					break;
-				}
 				session.send(userInput);
 				if (StringUtils.startsWith(userInput.toLowerCase(), "quit")) {
 					shutdown = true;
@@ -100,6 +95,11 @@ public class YahtzeeClient implements Runnable {
 				}
 				// System.out.println("Listening for server");
 				fromServer = session.receive();
+				if (fromServer == null) {
+					System.out.println("Lost connection to server.");
+					shutdown=true;
+					break;
+				}
 				System.out.println(fromServer);
 
 				if ("Bye".equalsIgnoreCase(fromServer)) {

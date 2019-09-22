@@ -152,7 +152,7 @@ public class Game {
 		rollCount++;
 	}
 
-	public void score(Player p, int i) {
+	public void score(Player p, int i) throws IllegalArgumentException, AlreadyScoredThereException {
 		p.score(i);
 		endTurn();
 	}

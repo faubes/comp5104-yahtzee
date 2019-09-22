@@ -21,7 +21,7 @@ public class PlayerTest {
 
 	@Test
 	public void testPlayerDefaultConstructor() {
-		assertEquals("Default player name", "New Player 1", p.getName());
+		assertTrue("Default player name", p.getName().startsWith("New Player"));
 	}
 
 	
@@ -66,7 +66,12 @@ public class PlayerTest {
 	@Test
 	public void testPlayerCanScore() {
 		p.roll();
+		try {
 		p.score(12);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		assertTrue("Player records a score in Chance", p.getScore() > 0);
 	}
 }

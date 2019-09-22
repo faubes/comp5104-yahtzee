@@ -36,11 +36,11 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		sheet.put(i, j);
 	}
 
-	public void score(Roll r, int i) {
+	public void score(Roll r, int i) throws IndexOutOfBoundsException, AlreadyScoredThereException {
 		if (i < 1 || i > 13)
 			throw new IndexOutOfBoundsException("Invalid category for scoring");
 		if (i != 13 && sheet.containsKey(i))
-			throw new IllegalArgumentException("Already scored in that category");
+			throw new AlreadyScoredThereException();
 		if (i == 13 && sheet.containsKey(i)) {
 			// another Yathzee?
 			yahtzees++;

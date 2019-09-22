@@ -51,7 +51,7 @@ public class Player implements Comparable<Player> {
 		
 	}
 
-	public void score(int i) {
+	public void score(int i) throws AlreadyScoredThereException, IllegalArgumentException {
 		scoresheet.score(roll, i);
 		
 	}

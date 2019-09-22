@@ -52,6 +52,7 @@ public class GameTest {
 	
 	@Test
 	public void testCanPlayARound() {
+		try {
 		g.start();
 		assertFalse("Game has not yet ended", g.hasEnded());
 		assertEquals("Round 1", g.getRound(), 1);
@@ -70,6 +71,10 @@ public class GameTest {
 		assertEquals("Back to Player 1", g.getCurrentPlayer(), p1);
 		g.quit();
 		assertTrue("Game has ended", g.hasEnded());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -86,6 +91,7 @@ public class GameTest {
 	public void testPlay13Rounds() {
 		g.start();
 		for (int i =1; i <= 13; i++) {
+			try {
 			assertEquals("Player 1's turn", g.getCurrentPlayer(), p1);
 			g.roll(p1);
 			g.score(p1, i);
@@ -95,6 +101,10 @@ public class GameTest {
 			assertEquals("now returns Player 3", g.getCurrentPlayer(), p3);
 			g.roll(p3);
 			g.score(p3, i);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		System.out.println(g.toString());
 		assertTrue("Game finished", g.hasEnded());
