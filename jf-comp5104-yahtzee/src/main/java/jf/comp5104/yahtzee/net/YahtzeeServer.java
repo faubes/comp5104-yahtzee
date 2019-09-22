@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -267,9 +268,23 @@ public class YahtzeeServer implements Runnable {
 			if (msg.text == null) {
 				return;
 			}
+			
 			Command cmd = Command.getCommandFromString(msg.text);
 			Player p = sessionPlayerMap.get(msg.getSender());
+				
 			try {
+				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingIndexSet()) {
+					int[] rerollIndex = cmd.getRerollIndicies()
+							.stream()
+							.mapToInt(Integer::intValue)
+							.toArray();
+					g.reroll(p, rerollIndex);
+					server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
+					server.broadcast(g.getCurrentPlayer().getRoll().toString());
+					g.setAwaitingIndexSet(false);
+					sendToCurrentPlayer(g.promptPlayer(p));
+					return;
+				}
 				switch (cmd) {
 				case SAY:
 					server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
@@ -292,6 +307,23 @@ public class YahtzeeServer implements Runnable {
 						server.broadcast(g.getCurrentPlayer().getRoll().toString());
 						sendToCurrentPlayer(g.promptPlayer(p));
 					}
+					break;
+				case REROLLALL:
+					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
+						g.reroll(p, 1,2,3,4,5);
+						server.broadcast(p.getName() + " rerolls everything!");
+						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						sendToCurrentPlayer(g.promptPlayer(p));
+					}
+					break;
+				case REROLLSOME:
+					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
+						g.setAwaitingIndexSet(true);
+						sendToCurrentPlayer(g.promptPlayer(p));
+					}
+					break;
+				default:
+					//do nothing
 					break;
 				}
 			} catch (NotYourTurnException e) {

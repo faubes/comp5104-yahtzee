@@ -3,6 +3,7 @@ package jf.comp5104.yahtzee;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.Set;
 
 public class Game {
@@ -11,6 +12,7 @@ public class Game {
 	Deque<Player> players;
 	private boolean started;
 	private boolean finished;
+	private boolean awaitingIndexSet;
 	private int round;
 	private int turnCount;
 	private int rollCount;
@@ -23,6 +25,7 @@ public class Game {
 		this.started = false;
 		this.finished = false;
 		this.rollCount = 0;
+		this.awaitingIndexSet = false;
 	}
 
 	public Game() {
@@ -82,7 +85,6 @@ public class Game {
 	public ArrayList<Player> getPlayersSortedByScore() {
 		ArrayList<Player> playersSortedByScore = new ArrayList<Player>(players);
 		playersSortedByScore.sort(Player::compareTo);
-		;
 		return playersSortedByScore;
 	}
 
@@ -112,6 +114,13 @@ public class Game {
 		return this.finished;
 	}
 
+	public void setAwaitingIndexSet(boolean b) {
+ 		this.awaitingIndexSet = b;
+	}
+	
+	public boolean isAwaitingIndexSet() {
+		return this.awaitingIndexSet;
+	}
 	public boolean isCurrentPlayer(Player p) throws NotYourTurnException {
 		if (p != getCurrentPlayer()) {
 			throw new NotYourTurnException();
@@ -157,11 +166,14 @@ public class Game {
 		p.reroll(is);
 		rollCount++;
 	}
-
+	
 	public String promptPlayer(Player p) {
 		if (p != getCurrentPlayer()) {
 			return "It's not your turn" + Yahtzee.EOL + "Please wait for " + getCurrentPlayer().getName() + "to finish!"
 					+ Yahtzee.EOL;
+		}
+		if (awaitingIndexSet) {
+			return "Please enter the dice position that you want to hold. Please separate each number with a <<SPACE>>";
 		}
 		if (rollCount == 0) {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
@@ -187,5 +199,7 @@ public class Game {
 		}
 		return sb.toString();
 	}
+
+
 
 }
