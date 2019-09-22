@@ -12,8 +12,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import jf.comp5104.yahtzee.Game;
+import jf.comp5104.yahtzee.NotYourTurnException;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Yahtzee;
+import jf.comp5104.yahtzee.net.PlayerCommand.Command;
 
 // sources and tutorials for networking components
 // docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
@@ -54,7 +56,7 @@ public class YahtzeeServer implements Runnable {
 		// thread for processing messageQ
 		this.messageQueueHandler = new MessageQueueHandler(this);
 		this.shutdown = false;
-		
+
 		this.playerSessionMap = new HashMap<Player, TCPConnection>();
 		this.sessionPlayerMap = new HashMap<TCPConnection, Player>();
 
@@ -153,7 +155,6 @@ public class YahtzeeServer implements Runnable {
 		shutdown();
 	}
 
-	
 	public void broadcast(Message msg) {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
@@ -169,10 +170,21 @@ public class YahtzeeServer implements Runnable {
 	public void broadcast(String str) {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
-				c.send(str);
-			}
+			c.send(str);
 		}
 
+	}
+
+	public boolean isQueueEmpty() {
+		return messageQueue.isEmpty();
+	}
+
+	public Message getMessage() throws InterruptedException {
+		if (!isQueueEmpty()) {
+			return messageQueue.take();
+		}
+		return null;
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -236,14 +248,13 @@ public class YahtzeeServer implements Runnable {
 			System.out.println("Listening for messages");
 			while (!shutdown) {
 				try {
-					if (server.messageQueue.isEmpty()) {
+					if (server.isQueueEmpty()) {
 						// for debug
 						// System.out.println("No messages");
-						Thread.sleep(5000);
+						Thread.sleep(500);
 					} else {
 						// System.out.println("take message from q");
-						Message msg = server.messageQueue.take();
-						processMessage(msg);
+						processMessage(server.getMessage());
 						// System.out.println(msg);
 					}
 				} catch (InterruptedException e) {
@@ -253,24 +264,45 @@ public class YahtzeeServer implements Runnable {
 		}
 
 		private void processMessage(Message msg) {
-			if (msg.text.isEmpty() || msg.text == null) {
+			if (msg.text == null) {
 				return;
 			}
-			if (msg.text.toLowerCase().startsWith("say ")) {
-				server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
-			}
-			if (msg.text.toLowerCase().startsWith("start")) {
-				if (g.hasStarted()) {
-					respond(msg, "Game has already started.");
-					return;
-				} else {
-				g.start();
-				server.broadcast("Game has begun!");
-				server.broadcast(g.toString());
-				sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
+			Command cmd = Command.getCommandFromString(msg.text);
+			Player p = sessionPlayerMap.get(msg.getSender());
+			try {
+				switch (cmd) {
+				case SAY:
+					server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
+					break;
+				case START:
+					if (hasGameStarted()) {
+						respond(msg, "Game has already started.");
+						return;
+					} else {
+						g = new Game(playerSessionMap.keySet()).start();
+						server.broadcast("Game has begun!");
+						server.broadcast(g.toString());
+						sendToCurrentPlayer(g.promptPlayer(p));
+					}
+					break;
+				case ENTER:
+					if (hasGameStarted() && g.isCurrentPlayer(p) && g.isFirstRoll()) {
+						g.roll(p);
+						server.broadcast(p.getName() + " rolls!");
+						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						sendToCurrentPlayer(g.promptPlayer(p));
+					}
+					break;
 				}
+			} catch (NotYourTurnException e) {
+				respond(msg, "It's not your turn.");
 			}
 		}
+
+		private boolean hasGameStarted() {
+			return g != null && g.hasStarted();
+		}
+
 		// respond to a message from sender with string
 		private void respond(Message msg, String string) {
 			msg.getSender().send(string);
@@ -279,7 +311,7 @@ public class YahtzeeServer implements Runnable {
 		private void sendToCurrentPlayer(String string) {
 			Player cur = g.getCurrentPlayer();
 			playerSessionMap.get(cur).send(string);
-		}		
+		}
 	}
 
 	class ClientHandler implements Runnable {

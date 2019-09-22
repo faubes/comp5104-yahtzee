@@ -72,8 +72,9 @@ public class TCPConnection {
 	public String receive() {
 		String s;
 		try {
-			// System.out.println(this.toString());
+//			System.out.print("TCP receive: ");
 			s = in.readLine();
+//			System.out.println(s);
 		}
 		catch (IOException e) {
 			s = "";

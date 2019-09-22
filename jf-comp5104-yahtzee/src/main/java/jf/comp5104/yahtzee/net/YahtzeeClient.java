@@ -16,7 +16,7 @@ public class YahtzeeClient implements Runnable {
 
 	private Thread serverThread;
 	private Thread IOThread;
-	
+
 	public YahtzeeClient(String host, int port) {
 		portNumber = port;
 		hostName = host;
@@ -38,29 +38,27 @@ public class YahtzeeClient implements Runnable {
 		serverThread.start();
 		IOThread.start();
 	}
-	
+
 	public void stop() {
 		System.out.println("Turning off client threads");
 		serverHandler.stop();
 		shutdown = true;
 	}
-	
+
 	@Override
 	public void run() {
 		String userInput;
 		while (!shutdown) {
 			if (Thread.currentThread().isInterrupted()) {
-				//shutdown instruction?
-				stop(); 
+				// shutdown instruction?
+				stop();
 				break;
 			}
-			//System.out.println("Awaiting user input");
+			// System.out.println("Awaiting user input");
 			try {
 				userInput = stdIn.readLine();
 				// System.out.println("Client input: " + userInput);
-				if (StringUtils.isNotBlank(userInput)) {
-					session.send(userInput);
-				}
+				session.send(userInput);
 				if (StringUtils.startsWith(userInput.toLowerCase(), "quit")) {
 					shutdown = false;
 				}
@@ -86,19 +84,19 @@ public class YahtzeeClient implements Runnable {
 		public void stop() {
 			this.shutdown = true;
 		}
-		
+
 		public void run() {
 			String fromServer;
 			while (!shutdown) {
 				if (Thread.currentThread().isInterrupted()) {
-					//shutdown instruction?
-					stop(); 
+					// shutdown instruction?
+					stop();
 					break;
 				}
 				// System.out.println("Listening for server");
 				fromServer = session.receive();
 				System.out.println(fromServer);
-				
+
 				if ("Bye".equalsIgnoreCase(fromServer)) {
 					client.stop();
 					break;

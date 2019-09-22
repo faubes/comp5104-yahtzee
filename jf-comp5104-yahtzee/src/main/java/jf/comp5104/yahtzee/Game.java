@@ -3,7 +3,7 @@ package jf.comp5104.yahtzee;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-
+import java.util.Set;
 
 public class Game {
 
@@ -14,21 +14,26 @@ public class Game {
 	private int round;
 	private int turnCount;
 	private int rollCount;
-	
-	Game (String name) {
+
+	public Game(String name) {
 		this.gameName = name;
 		this.players = new ArrayDeque<Player>(5);
-		this.round = 0;		
+		this.round = 0;
 		this.turnCount = 0;
 		this.started = false;
 		this.finished = false;
 		this.rollCount = 0;
 	}
-	
-	Game () {
+
+	public Game() {
 		this("Default Game");
 	}
-	
+
+	public Game(Set<Player> keySet) {
+		this();
+		players.addAll(keySet);
+	}
+
 	public Player getCurrentPlayer() {
 		return players.peek();
 	}
@@ -37,18 +42,18 @@ public class Game {
 		players.addLast(players.pollFirst()); // move player to end of the deque
 		rollCount = 0; // reset reroll counter
 		turnCount++;
-		if (turnCount % players.size() == 0) { 
+		if (turnCount % players.size() == 0) {
 			round++;
 		}
 		if (round > 13) {
 			stop();
 		}
 	}
-	
+
 	public void setName(String name) {
-		this.gameName= name;
+		this.gameName = name;
 	}
-	
+
 	public String getName() {
 		return this.gameName;
 	}
@@ -56,7 +61,7 @@ public class Game {
 	public void addPlayer(Player p) {
 		if (started) {
 			System.err.println("Cannot add player to game in progress!");
-			
+
 		} else {
 			players.addLast(p);
 		}
@@ -65,7 +70,7 @@ public class Game {
 	public void removePlayer(Player p) {
 		players.remove(p);
 	}
-	
+
 	public int getRound() {
 		return round;
 	}
@@ -76,21 +81,23 @@ public class Game {
 
 	public ArrayList<Player> getPlayersSortedByScore() {
 		ArrayList<Player> playersSortedByScore = new ArrayList<Player>(players);
-		playersSortedByScore.sort(Player::compareTo);;
+		playersSortedByScore.sort(Player::compareTo);
+		;
 		return playersSortedByScore;
 	}
+
 	public Player getWinner() {
 		// what about a tie?
 		return getPlayersSortedByScore().get(1);
 	}
 
-	public void start() {
+	public Game start() {
 		this.started = true;
 		this.finished = false;
 		this.round = 1;
-		
+		return this;
 	}
-	
+
 	public void stop() {
 		this.started = false;
 		this.finished = true;
@@ -105,7 +112,17 @@ public class Game {
 		return this.finished;
 	}
 
-	public void roll(Player p) {		
+	public boolean isCurrentPlayer(Player p) throws NotYourTurnException {
+		if (p != getCurrentPlayer()) {
+			throw new NotYourTurnException();
+		}
+		return true;
+	}
+
+	public boolean isFirstRoll() {
+		return rollCount == 0;
+	}
+	public void roll(Player p) {
 		p.roll();
 		rollCount++;
 	}
@@ -128,35 +145,34 @@ public class Game {
 		}
 		return sb.toString();
 	}
-	
+
 	public void reroll(Player p) {
-		reroll(p, 1,2,3,4,5);
+		reroll(p, 1, 2, 3, 4, 5);
 	}
-	
-	public void reroll(Player p, int...is) {
+
+	public void reroll(Player p, int... is) {
 		if (rollCount >= 3) {
 			throw new IllegalStateException("Cannot reroll more than twice");
 		}
-	p.reroll(is);
-	rollCount++;
+		p.reroll(is);
+		rollCount++;
 	}
-	
+
 	public String promptPlayer(Player p) {
 		if (p != getCurrentPlayer()) {
-			return "It's not your turn" + Yahtzee.EOL +
-					"Please wait for " + getCurrentPlayer().getName() +
-					"to finish!" + Yahtzee.EOL;
+			return "It's not your turn" + Yahtzee.EOL + "Please wait for " + getCurrentPlayer().getName() + "to finish!"
+					+ Yahtzee.EOL;
 		}
 		if (rollCount == 0) {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
 		}
 		if (rollCount >= 1 && rollCount <= 2) {
-			return "(1) Reroll everything" + Yahtzee.EOL +
-			"(2) Reroll by index" + Yahtzee.EOL +
-			"(3) Score" + Yahtzee.EOL;
-		}
-		else return "(3) Score" + Yahtzee.EOL;
+			return "(1) Reroll everything" + Yahtzee.EOL + "(2) Reroll by index" + Yahtzee.EOL + "(3) Score"
+					+ Yahtzee.EOL;
+		} else
+			return "(3) Score" + Yahtzee.EOL;
 	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Game: ");
