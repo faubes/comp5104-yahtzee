@@ -53,6 +53,9 @@ public class Game {
 		turnCount++;
 		if (turnCount % players.size() == 0) {
 			round++;
+			for (Player p : players) {
+				p.setRound(round);
+			}
 		}
 		if (round > 12) {
 			stop();

@@ -56,7 +56,7 @@ public class YahtzeeServer implements Runnable {
 		this.playerSessionMap = new HashMap<Player, TCPConnection>();
 		this.sessionPlayerMap = new HashMap<TCPConnection, Player>();
 
-		System.out.println("Server socket " + hostName + " : " + port);
+		// System.out.println("Server socket " + hostName + " : " + port);
 
 	}
 
@@ -82,7 +82,7 @@ public class YahtzeeServer implements Runnable {
 				Socket newClient = serverSocket.accept();
 				// connection acquired
 				TCPConnection newConnection = new TCPConnection(newClient);
-				System.out.println("New connection: " + newConnection.toString());
+				System.out.println("New connection: " + newConnection.getINetAddress().toString());
 				// add to list of clients
 				clients.add(newConnection);
 				// create new player and add to session map

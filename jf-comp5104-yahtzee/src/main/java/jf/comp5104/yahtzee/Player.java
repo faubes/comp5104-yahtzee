@@ -21,6 +21,10 @@ public class Player implements Comparable<Player> {
 		return username;
 	}
 	
+	public void setRound(int i) {
+		scoresheet.setRound(i);
+	}
+	
 	public void setName(String name) {
 		this.username = name;
 		this.scoresheet.setName(name);

@@ -13,6 +13,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 	private boolean bonus;
 	private int yahtzees;
+	private int round;
 
 	static String[] Categories = {
 		"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", 
@@ -27,6 +28,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	public Scoresheet(String str) {
 		sheet = new HashMap<Integer, Integer>(13);
 		name = str;
+		this.round = 1;
 	}
 
 	public String getName() {
@@ -93,6 +95,14 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		checkForBonus();
 	}
 
+	public void setRound(int i) {
+		this.round = i;
+	}
+	
+	public int getRound() {
+		return round;
+	}
+	
 	private void checkForBonus() {
 		setBonus(calculateTotalUpperSection() >= 63);
 	}
@@ -127,18 +137,33 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	// get score from a particular category
 	public int getScore(int i) {
 		return sheet.getOrDefault(i, 0);
-	}// TODO Auto-generated method stub
+	}
+	
+	// need to distinguish between zero and not scored yet
+	public String getScoreString(int i) {
+		return sheet.get(i) != null ? sheet.get(i).toString() : " ";
+	}
 
 	@Override
 	public int compareTo(Scoresheet o) {
 		return getTotal() - o.getTotal();
 	}
 
-	private static final String line = "----------------------------------------------------------------------------------------------------------";
 	private static final String lSep = "|";
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		
+		// construct horizontal line
+		for (int i = 0; i < 121; i++) {
+			sb.append("-");
+		}
+		final String line = sb.toString();
+		
+		// clear builder
+		sb.delete(0, sb.length());
+		
+		// formatter lets you specify width and stuff for pretty printing
 		Formatter formatter = new Formatter(sb);
 		
 		Iterator<String> it = Arrays.asList(Categories).iterator();
@@ -146,15 +171,15 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		sb.append(line);
 		sb.append(Yahtzee.EOL);
 		sb.append(lSep);
-		formatter.format(" %1$-19s : %2$-10s |", "Player Name", getName());
-		formatter.format(" %1$-19s : %2$-10d |", "Current Score", getTotal());
-		formatter.format(" %1$-19s : %2$-10d |", "Current Round", 0);
+		formatter.format(" %1$-19s : %2$-15s |", "Player Name", getName());
+		formatter.format(" %1$-19s : %2$-15d |", "Current Score", getTotal());
+		formatter.format(" %1$-19s : %2$-15d |", "Current Round", getRound());
 		sb.append(Yahtzee.EOL);
 		sb.append(line);
 		sb.append(Yahtzee.EOL);
 		sb.append(lSep);
 		while (it.hasNext()) {
-			formatter.format(" (%1$-2d) %2$-14s : %3$-10d |", i, it.next(), getScore(i));
+			formatter.format(" (%1$-2d) %2$-14s : %3$-15s |", i, it.next(), getScoreString(i));
 			if (i % 3 == 0 ) {
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
@@ -164,9 +189,9 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 			if (i == 6 ) {
 				// print Top Totals and Bonus
-				formatter.format(" %1$-19s : %2$-10d |", "Top Sub-Total", getUpperTotal1());
-				formatter.format(" %1$-19s : %2$-10s |", "Top Bonus", bonus ? "35" : " ");
-				formatter.format(" %1$-19s : %2$-10d |", "Top Sub-Total", getUpperTotal2());
+				formatter.format(" %1$-19s : %2$-15d |", "Top Sub-Total", getUpperTotal1());
+				formatter.format(" %1$-19s : %2$-15s |", "Top Bonus", bonus ? "35" : " ");
+				formatter.format(" %1$-19s : %2$-15d |", "Top Sub-Total", getUpperTotal2());
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
 				sb.append(Yahtzee.EOL);
@@ -175,8 +200,8 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 			i++;
 		}
-		formatter.format(" %1$-19s : %2$-10d", " Bonus Yahtzees", yahtzees);
-		for (int j = 0; j < 10; j++) {
+		formatter.format(" %1$-19s : %2$-15d ", " Bonus Yahtzees", yahtzees);
+		for (int j = 0; j < 11; j++) {
 			formatter.format( "|%1$3s", yahtzees > j ? "X" : " ");
 		}
 		formatter.close();
