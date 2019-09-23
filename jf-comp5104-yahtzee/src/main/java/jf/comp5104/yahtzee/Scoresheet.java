@@ -2,6 +2,7 @@ package jf.comp5104.yahtzee;
 
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -133,74 +134,55 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		return getTotal() - o.getTotal();
 	}
 
-	private static final String line = "-------------------------------------------------------------------------------------------------";
-	private static final String lSep = "| ";
-	private static final String rSep = " |";
-	private static final String mSep = " | ";
-	private static final String cSep = " : ";
+	private static final String line = "----------------------------------------------------------------------------------------------------------";
+	private static final String lSep = "|";
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		Formatter formatter = new Formatter(sb);
+		
 		Iterator<String> it = Arrays.asList(Categories).iterator();
 		int i = 1;
 		sb.append(line);
 		sb.append(Yahtzee.EOL);
 		sb.append(lSep);
-		sb.append("Player Name");
-		sb.append(cSep);
-		sb.append(getName());
-		sb.append(rSep);
+		formatter.format(" %1$-19s : %2$-10s |", "Player Name", getName());
+		formatter.format(" %1$-19s : %2$-10d |", "Current Score", getTotal());
+		formatter.format(" %1$-19s : %2$-10d |", "Current Round", 0);
 		sb.append(Yahtzee.EOL);
 		sb.append(line);
 		sb.append(Yahtzee.EOL);
-
 		sb.append(lSep);
 		while (it.hasNext()) {
-			sb.append("(");
-			sb.append(i);
-			sb.append(") ");
-			sb.append(it.next());
-			sb.append(cSep);
-			sb.append(getScore(i));
+			formatter.format(" (%1$-2d) %2$-14s : %3$-10d |", i, it.next(), getScore(i));
+			if (i % 3 == 0 ) {
+				sb.append(Yahtzee.EOL);
+				sb.append(line);
+				sb.append(Yahtzee.EOL);
+				sb.append(lSep);
+			}
+
 			if (i == 6 ) {
-				sb.append(rSep);		
-				sb.append(Yahtzee.EOL);
-				sb.append(line);
-				sb.append(Yahtzee.EOL);
-				sb.append(lSep);
-				sb.append("Top Sub-Total");
-				sb.append(cSep);
-				sb.append(this.getUpperTotal1());
-				sb.append(mSep);
-				sb.append("Top Bonus");
-				sb.append(cSep);
-				sb.append(bonus ? 35 : 0);
-				sb.append(mSep);
-				sb.append("Top Total");
-				sb.append(cSep);
-				sb.append(this.getUpperTotal2());
-				sb.append(rSep);
-				sb.append(Yahtzee.EOL);
-				sb.append(line);
-				sb.append(Yahtzee.EOL);
-				sb.append(lSep);
-			} else if (i == 9) {
-				sb.append(rSep);		
+				// print Top Totals and Bonus
+				formatter.format(" %1$-19s : %2$-10d |", "Top Sub-Total", getUpperTotal1());
+				formatter.format(" %1$-19s : %2$-10s |", "Top Bonus", bonus ? "35" : " ");
+				formatter.format(" %1$-19s : %2$-10d |", "Top Sub-Total", getUpperTotal2());
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
 				sb.append(Yahtzee.EOL);
 				sb.append(lSep);
 			}
-			else if (i == 13) {
-				sb.append(Yahtzee.EOL);
-				sb.append(line);
-				sb.append(Yahtzee.EOL);				
-			}
-			else {
-				sb.append(mSep);				
-			}
+
 			i++;
 		}
+		formatter.format(" %1$-19s : %2$-10d", " Bonus Yahtzees", yahtzees);
+		for (int j = 0; j < 10; j++) {
+			formatter.format( "|%1$3s", yahtzees > j ? "X" : " ");
+		}
+		formatter.close();
+		sb.append(Yahtzee.EOL);
+		sb.append(line);
+		sb.append(Yahtzee.EOL);
 		return sb.toString();
 	}
 
