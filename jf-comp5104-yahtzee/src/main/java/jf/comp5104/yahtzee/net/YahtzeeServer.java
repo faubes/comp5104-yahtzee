@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -12,13 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import jf.comp5104.yahtzee.AlreadyScoredThereException;
-import jf.comp5104.yahtzee.Game;
-import jf.comp5104.yahtzee.Game.InputGameState;
-import jf.comp5104.yahtzee.NotYourTurnException;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Yahtzee;
-import jf.comp5104.yahtzee.net.PlayerCommand.Command;
 
 // sources and tutorials for networking components
 // docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html
@@ -128,7 +122,7 @@ public class YahtzeeServer implements Runnable {
 		shutdown();
 	}
 
-	// distinguish output for owned event
+	// broadcast when a player says something
 	public void broadcast(Message msg) {
 		for (TCPConnection c : clients) {
 			// System.out.println("Broadcasting to " + c.getId());
@@ -136,6 +130,16 @@ public class YahtzeeServer implements Runnable {
 				c.send("You: " + msg.toString());
 			} else {
 				c.send(sessionPlayerMap.get(msg.getSender()).getName() + ": " + msg.toString());
+			}
+		}
+	}
+
+	// transmit to all except sender
+	public void sendToAllExcept(Message msg, String string) {
+		for (TCPConnection c : clients) {
+			// System.out.println("Broadcasting to " + c.getId());
+			if (c != msg.getSender()) {
+				c.send(string);
 			}
 		}
 	}
@@ -225,4 +229,6 @@ public class YahtzeeServer implements Runnable {
 		}
 		return sb.toString();
 	}
+
+
 }

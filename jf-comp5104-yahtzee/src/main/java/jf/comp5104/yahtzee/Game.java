@@ -3,7 +3,6 @@ package jf.comp5104.yahtzee;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
 import java.util.Set;
 
 public class Game {
@@ -19,7 +18,6 @@ public class Game {
 	Deque<Player> players;
 	private boolean started;
 	private boolean finished;
-	private boolean awaitingIndexSet;
 	private int round;
 	private int turnCount;
 	private int rollCount;
@@ -33,7 +31,7 @@ public class Game {
 		this.started = false;
 		this.finished = false;
 		this.rollCount = 0;
-		this.awaitingIndexSet = false;
+		this.inputState = InputGameState.NEEDCOMMAND;
 	}
 
 	public Game() {
@@ -138,7 +136,7 @@ public class Game {
 		return this.inputState == InputGameState.NEEDCATEGORY;
 	}
 	public boolean isCurrentPlayer(Player p) {
-		return p != getCurrentPlayer();
+		return p == getCurrentPlayer();
 	}
 
 	public boolean isFirstRoll() {
@@ -209,8 +207,9 @@ public class Game {
 		sb.append(getScoresheets());
 		sb.append(Yahtzee.EOL);
 		if (hasEnded()) {
-			sb.append("Winner is: ");
-			sb.append(getWinner());
+			sb.append(getWinner().getName());
+			sb.append("is the winner with a score of ");
+			sb.append(getWinner().getScore());
 			sb.append(Yahtzee.EOL);
 		}
 		return sb.toString();

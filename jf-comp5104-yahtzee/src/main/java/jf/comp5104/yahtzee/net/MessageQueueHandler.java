@@ -70,6 +70,8 @@ class MessageQueueHandler implements Runnable {
 				server.respond(msg, "Syntax: name <newname>");
 				break;
 			}
+			server.respond(msg, "Changed your name to " + split[1]);
+			server.sendToAllExcept(msg, p.getName() + " has changed their name to " + split[1]);
 			p.setName(split[1]);
 			break;
 		case START:
@@ -81,7 +83,7 @@ class MessageQueueHandler implements Runnable {
 				server.broadcast("Game has begun!");
 				server.broadcast(g.toString());
 				// need to prompt current player - who may not be one who starts game
-				server.sendToPlayer(p, g.promptPlayer(g.getCurrentPlayer()));
+				server.sendToPlayer(g.getCurrentPlayer(), g.promptPlayer(g.getCurrentPlayer()));
 			}
 			break;
 		case STOP:
@@ -110,19 +112,25 @@ class MessageQueueHandler implements Runnable {
 			case NEEDINDEXSET:
 				int[] rerollIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
 				g.reroll(p, rerollIndex);
-				server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
-				server.broadcast(g.getCurrentPlayer().getRoll().toString());
+				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
+				server.sendToAllExcept(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
+
+				server.respond(msg, "You get " + p.getRoll().toString());
+				server.sendToAllExcept(msg, p.getName() + " gets " + p.getRoll().toString());
+
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				server.sendToPlayer(p, g.promptPlayer(p));
 				return true;
 			// waiting for category to score
 			case NEEDCATEGORY:
 				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
-				g.score(p, categoryIndex);
+				g.score(p, categoryIndex); // score calls endTurn, which changes current player
 				server.broadcast(p.getName() + " scores in category " + categoryIndex);
 				g.setInputState(InputGameState.NEEDCOMMAND);
+				server.broadcast("It is now " + g.getCurrentPlayer().getName() + "'s turn to go.");
 				server.broadcast(g.toString());
-				server.sendToPlayer(p, g.promptPlayer(g.getCurrentPlayer()));
+				// score ends the turn, so need to send to current player
+				server.sendToPlayer(g.getCurrentPlayer(), g.promptPlayer(g.getCurrentPlayer()));
 				return true;
 			// usual player commands
 			case NEEDCOMMAND:
@@ -130,18 +138,21 @@ class MessageQueueHandler implements Runnable {
 				case ENTER:
 					if (g.isFirstRoll()) {
 						g.roll(p);
-						server.broadcast(p.getName() + " rolls!");
-						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						server.respond(msg, "You roll:\n " + p.getRoll().toString());
+						server.sendToAllExcept(msg, p.getName() + " rolls: \n" + p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
+						server.sendToAllExcept(msg,  p.getName() + " is deciding what to do next.");
 						return true;
 					}
 					break;
 				case REROLLALL:
 					if (!g.isFirstRoll()) {
-						g.reroll(p, 1, 2, 3, 4, 5);
-						server.broadcast(p.getName() + " rerolls everything!");
-						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						g.reroll(p);
+						server.respond(msg, "You reroll everything.");
+						server.sendToAllExcept(msg, p.getName() + " rerolls everything.");
+						server.broadcast(p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
+						server.sendToAllExcept(msg,  p.getName() + " is deciding what to do next.");
 						return true;
 					}
 					break;
