@@ -37,6 +37,7 @@ Focus on Test Driven Development, Maven build &amp; dependency mgt, Object-orien
 	</dependencies>
 
 	<build>
+	<finalName>yahtzee</finalName> 
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
