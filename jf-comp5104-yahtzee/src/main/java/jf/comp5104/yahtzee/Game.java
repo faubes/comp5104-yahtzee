@@ -58,6 +58,10 @@ public class Game {
 			stop();
 		}
 	}
+	
+	public boolean newRound() {
+		return (turnCount % players.size() == 0);
+	}
 
 	public void setName(String name) {
 		this.gameName = name;
