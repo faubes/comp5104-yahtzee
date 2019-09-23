@@ -137,11 +137,8 @@ public class Game {
 	public boolean isAwaitingCategory() {
 		return this.inputState == InputGameState.NEEDCATEGORY;
 	}
-	public boolean isCurrentPlayer(Player p) throws NotYourTurnException {
-		if (p != getCurrentPlayer()) {
-			throw new NotYourTurnException();
-		}
-		return true;
+	public boolean isCurrentPlayer(Player p) {
+		return p != getCurrentPlayer();
 	}
 
 	public boolean isFirstRoll() {

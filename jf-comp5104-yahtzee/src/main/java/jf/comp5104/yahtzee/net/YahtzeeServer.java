@@ -58,7 +58,7 @@ public class YahtzeeServer implements Runnable {
 		// thread for processing messageQ
 		this.messageQueueHandler = new MessageQueueHandler(this);
 		this.shutdown = false;
-
+		
 		this.playerSessionMap = new HashMap<Player, TCPConnection>();
 		this.sessionPlayerMap = new HashMap<TCPConnection, Player>();
 
@@ -146,9 +146,19 @@ public class YahtzeeServer implements Runnable {
 			// System.out.printlnmessageQueue("Broadcasting to " + c.getId());
 			c.send(str);
 		}
-
 	}
 
+	// respond to a message from sender with string
+	void respond(Message msg, String string) {
+		msg.getSender().send(string);
+	}
+	
+	// send to a particular player using playerSessionMap
+	void sendToPlayer(Player p, String string) {
+		playerSessionMap.get(p).send(string);
+	}
+	
+	// No messages
 	public boolean isQueueEmpty() {
 		return messageQueue.isEmpty();
 	}
@@ -192,7 +202,6 @@ public class YahtzeeServer implements Runnable {
 			Thread.currentThread().interrupt();
 		}
 	}
-
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

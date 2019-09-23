@@ -27,7 +27,7 @@ public class PlayerCommand {
 			return desc;
 		}
 		
-		List<Integer> getRerollIndicies() {
+		List<Integer> getNumericValues() {
 			return rerollIndicies;
 		}
 

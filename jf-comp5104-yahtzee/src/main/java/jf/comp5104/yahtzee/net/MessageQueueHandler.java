@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import jf.comp5104.yahtzee.AlreadyScoredThereException;
 import jf.comp5104.yahtzee.Game;
-import jf.comp5104.yahtzee.NotYourTurnException;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Game.InputGameState;
 import jf.comp5104.yahtzee.net.PlayerCommand.Command;
@@ -51,118 +50,137 @@ class MessageQueueHandler implements Runnable {
 		if (msg.getText() == null) {
 			return;
 		}
-
 		Command cmd = Command.getCommandFromString(msg.getText());
 		Player p = server.sessionPlayerMap.get(msg.getSender());
 
+		if (hasGameStarted() && g.isCurrentPlayer(p)) {
+			// process commands available to current player
+			if (processCommandFromCurrentPlayer(p, cmd, msg)) {
+				// do not continue if game action from current player successful
+				return;
+			}
+		} // commands available to all players
+		switch (cmd) {
+		case SAY:
+			server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
+			break;
+		case NAME:
+			String[] split = msg.getText().split(" ");
+			if (split.length != 2) {
+				server.respond(msg, "Syntax: name <newname>");
+				break;
+			}
+			p.setName(split[1]);
+			break;
+		case START:
+			if (hasGameStarted()) {
+				server.respond(msg, "Game has already started.");
+				break;
+			} else {
+				g = new Game(server.playerSessionMap.keySet()).start();
+				server.broadcast("Game has begun!");
+				server.broadcast(g.toString());
+				// need to prompt current player - who may not be one who starts game
+				server.sendToPlayer(p, g.promptPlayer(g.getCurrentPlayer()));
+			}
+			break;
+		case STOP:
+			if (!hasGameStarted()) {
+				server.respond(msg, "No game in progress.");
+			} else {
+				server.broadcast("Game has been ended by " + p.getName());
+				g.stop();
+			}
+			break;
+		default:
+			// catches INVALID command
+			// does nothing
+			break;
+		}
+	}
+
+	private boolean processCommandFromCurrentPlayer(Player p, Command cmd, Message msg) throws IllegalArgumentException {
+		// we know p is current player
+		if (p != g.getCurrentPlayer()) {
+			throw new IllegalArgumentException("Attempting to process command for current player, but player not active.");
+		}
 		try {
-			if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingIndexSet()) {
-				int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
+			switch (g.getInputState()) {
+			// waiting for dice to reroll
+			case NEEDINDEXSET:
+				int[] rerollIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
 				g.reroll(p, rerollIndex);
 				server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 				server.broadcast(g.getCurrentPlayer().getRoll().toString());
 				g.setInputState(InputGameState.NEEDCOMMAND);
-				sendToCurrentPlayer(g.promptPlayer(p));
-				return;
-			}
-			if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingCategory()) {
-				int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
-				g.score(p, rerollIndex[0]);
-				server.broadcast(p.getName() + " scores in category " + rerollIndex[0]);
+				server.sendToPlayer(p, g.promptPlayer(p));
+				return true;
+			// waiting for category to score
+			case NEEDCATEGORY:
+				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
+				g.score(p, categoryIndex);
+				server.broadcast(p.getName() + " scores in category " + categoryIndex);
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				server.broadcast(g.toString());
-				sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
-				return;
-			}
-
-			switch (cmd) {
-			case SAY:
-				server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
-				break;
-			case NAME:
-				String[] split = msg.getText().split(" ");
-				if (split.length != 2) {
-					respond(msg, "Syntax: name <newname>");
+				server.sendToPlayer(p, g.promptPlayer(g.getCurrentPlayer()));
+				return true;
+			// usual player commands
+			case NEEDCOMMAND:
+				switch (cmd) {
+				case ENTER:
+					if (g.isFirstRoll()) {
+						g.roll(p);
+						server.broadcast(p.getName() + " rolls!");
+						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						server.sendToPlayer(p, g.promptPlayer(p));
+						return true;
+					}
 					break;
-				}
-				p.setName(split[1]);
-				break;
-			case START:
-				if (hasGameStarted()) {
-					respond(msg, "Game has already started.");
+				case REROLLALL:
+					if (!g.isFirstRoll()) {
+						g.reroll(p, 1, 2, 3, 4, 5);
+						server.broadcast(p.getName() + " rerolls everything!");
+						server.broadcast(g.getCurrentPlayer().getRoll().toString());
+						server.sendToPlayer(p, g.promptPlayer(p));
+						return true;
+					}
 					break;
-				} else {
-					g = new Game(server.playerSessionMap.keySet()).start();
-					server.broadcast("Game has begun!");
-					server.broadcast(g.toString());
-					sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
-				}
-				break;
-			case STOP:
-				if (!hasGameStarted()) {
-					respond(msg, "No game in progress.");
-				}
-				else {
-					server.broadcast("Game has been stopped.");
-					g.stop();
-				}
-				break;
-			case ENTER:
-				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isFirstRoll()) {
-					g.roll(p);
-					server.broadcast(p.getName() + " rolls!");
-					server.broadcast(g.getCurrentPlayer().getRoll().toString());
-					sendToCurrentPlayer(g.promptPlayer(p));
-				}
-				break;
-			case REROLLALL:
-				if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-					g.reroll(p, 1, 2, 3, 4, 5);
-					server.broadcast(p.getName() + " rerolls everything!");
-					server.broadcast(g.getCurrentPlayer().getRoll().toString());
-					sendToCurrentPlayer(g.promptPlayer(p));
-				}
-				break;
-			case REROLLSOME:
-				if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-					g.setInputState(InputGameState.NEEDINDEXSET);
-					sendToCurrentPlayer(g.promptPlayer(p));
-				}
-				break;
-			case SCORE:
-				if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-					g.setInputState(InputGameState.NEEDCATEGORY);
-					sendToCurrentPlayer(p.getScoresheet().toString());
-					sendToCurrentPlayer(g.promptPlayer(p));
-				}
-				break;
+				case REROLLSOME:
+					if (!g.isFirstRoll()) {
+						g.setInputState(InputGameState.NEEDINDEXSET);
+						server.sendToPlayer(p, g.promptPlayer(p));
+						return true;
+					}
+					break;
+				case SCORE:
+					if (!g.isFirstRoll()) {
+						g.setInputState(InputGameState.NEEDCATEGORY);
+						server.sendToPlayer(p, p.getScoresheet().toString());
+						server.sendToPlayer(p, g.promptPlayer(p));
+						return true;
+					}
+					break;
+				default:
+					break;
+				} 
+				break; // end of NEEDCOMMAND state
 			default:
-				// do nothing
 				break;
 			}
-		} catch (NotYourTurnException e) {
-			respond(msg, "It's not your turn.");
 		} catch (AlreadyScoredThereException e) {
-			respond(msg, "You've already scored in that category.");
+			server.respond(msg, "You've already scored in that category.");
 			g.setInputState(InputGameState.NEEDCOMMAND);
-			sendToCurrentPlayer(g.promptPlayer(p));
+			server.sendToPlayer(p, g.promptPlayer(p));
 		} catch (IndexOutOfBoundsException e) {
-			respond(msg, "That is not a valid category. Choose 1-13.");
-			sendToCurrentPlayer(g.promptPlayer(p));
+			server.respond(msg, "That is not a valid category. Choose 1-13.");
+			server.sendToPlayer(p, g.promptPlayer(p));
 		}
+		return false;
 	}
 
 	private boolean hasGameStarted() {
 		return g != null && g.hasStarted();
 	}
 
-	// respond to a message from sender with string
-	private void respond(Message msg, String string) {
-		msg.getSender().send(string);
-	}
 
-	private void sendToCurrentPlayer(String string) {
-		Player cur = g.getCurrentPlayer();
-		server.playerSessionMap.get(cur).send(string);
-	}
 }
