@@ -142,15 +142,18 @@ class MessageQueueHandler implements Runnable {
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				server.broadcast(p.getName() + " scores in category " + categoryIndex);
 				if (g.hasEnded()) {
+					server.broadcast("The game has ended!");
 					server.broadcast(g.toString());
+					System.out.println("Game has ended.");
 					return true;
 				}
 				
 				if (g.newRound()) {
-					server.broadcast("Starting turn " + g.getRound());
+					server.broadcast("Starting round " + g.getRound());
+					System.out.println("Starting round " + g.getRound());
 				}
 				
-				server.broadcast("It is now " + g.getCurrentPlayer().getName() + "'s turn to go.");
+				server.broadcast("It is now " + g.getCurrentPlayer().getName() + "'s turn.");
 				server.broadcast(g.toString());
 				// score ends the turn, so need to send to current player
 				server.sendToPlayer(g.getCurrentPlayer(), g.promptPlayer(g.getCurrentPlayer()));
