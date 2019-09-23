@@ -37,11 +37,10 @@ public class YahtzeeServer implements Runnable {
 	private MessageQueueHandler messageQueueHandler;
 	private ArrayList<TCPConnection> clients;
 	private ArrayList<ClientHandler> clientHandlers;
-	private HashMap<Player, TCPConnection> playerSessionMap;
-	private HashMap<TCPConnection, Player> sessionPlayerMap;
+	HashMap<Player, TCPConnection> playerSessionMap; // package visibility for MessageQueueHandler
+	HashMap<TCPConnection, Player> sessionPlayerMap; // package visibility for MessageQueueHandler
 	protected boolean shutdown;
 	protected BlockingQueue<Message> messageQueue;
-	private Game g; // maybe want to be able to host multiple games?
 
 	public YahtzeeServer(String hostname, int port, int poolSize) throws IOException {
 		// socket and info
@@ -113,35 +112,6 @@ public class YahtzeeServer implements Runnable {
 		return portNumber;
 	}
 
-	private void shutdown() {
-		shutdown = true;
-		messageQueueHandler.setShutdown(true);
-		for (ClientHandler c : clientHandlers) {
-			c.setShutdown(true);
-		}
-		shutdownAndAwaitTermination(this.pool);
-	}
-
-	// shutdown
-	private void shutdownAndAwaitTermination(ExecutorService pool) {
-		shutdown = true;
-		pool.shutdown(); // Disable new tasks from being submitted
-		try {
-			// Wait a while for existing tasks to terminate
-			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-				pool.shutdownNow(); // Cancel currently executing tasks
-				// Wait a while for tasks to respond to being cancelled
-				if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-					System.err.println("Pool did not terminate");
-			}
-		} catch (InterruptedException ie) {
-			// (Re-)Cancel if current thread also interrupted
-			pool.shutdownNow();
-			// Preserve interrupt status
-			Thread.currentThread().interrupt();
-		}
-	}
-
 	public boolean serverStarted() {
 		return !shutdown;
 	}
@@ -194,6 +164,36 @@ public class YahtzeeServer implements Runnable {
 		messageQueue.add(new Message(c, str));
 	}
 
+	private void shutdown() {
+		shutdown = true;
+		messageQueueHandler.setShutdown(true);
+		for (ClientHandler c : clientHandlers) {
+			c.setShutdown(true);
+		}
+		shutdownAndAwaitTermination(this.pool);
+	}
+
+	// shutdown
+	private void shutdownAndAwaitTermination(ExecutorService pool) {
+		shutdown = true;
+		pool.shutdown(); // Disable new tasks from being submitted
+		try {
+			// Wait a while for existing tasks to terminate
+			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+				pool.shutdownNow(); // Cancel currently executing tasks
+				// Wait a while for tasks to respond to being cancelled
+				if (!pool.awaitTermination(60, TimeUnit.SECONDS))
+					System.err.println("Pool did not terminate");
+			}
+		} catch (InterruptedException ie) {
+			// (Re-)Cancel if current thread also interrupted
+			pool.shutdownNow();
+			// Preserve interrupt status
+			Thread.currentThread().interrupt();
+		}
+	}
+
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Hostname: ");
@@ -216,208 +216,4 @@ public class YahtzeeServer implements Runnable {
 		}
 		return sb.toString();
 	}
-
-	// nested class Message encapsulates client and string message
-
-	class Message {
-		private TCPConnection sender;
-		private String text;
-
-		Message(TCPConnection c, String s) {
-			this.sender = c;
-			this.text = s;
-		}
-
-		public TCPConnection getSender() {
-			return sender;
-		}
-
-		public String toString() {
-			return text;
-		}
-	}
-
-	// nested MessageQueue class polls the queue and broadcasts to all clients
-	class MessageQueueHandler implements Runnable {
-
-		private volatile boolean shutdown;
-		YahtzeeServer server;
-
-		MessageQueueHandler(YahtzeeServer server) {
-			this.server = server;
-			this.shutdown = false;
-		}
-
-		void setShutdown(boolean b) {
-			this.shutdown = b;
-		}
-
-		public void run() {
-			System.out.println("Listening for messages");
-			while (!shutdown) {
-				try {
-					if (server.isQueueEmpty()) {
-						// for debug
-						// System.out.println("No messages");
-						Thread.sleep(500);
-					} else {
-						// System.out.println("take message from q");
-						processMessage(server.getMessage());
-						// System.out.println(msg);
-					}
-				} catch (InterruptedException e) {
-					System.err.println("Error in receive Msg?");
-				}
-			}
-		}
-
-		private void processMessage(Message msg) {
-			if (msg.text == null) {
-				return;
-			}
-
-			Command cmd = Command.getCommandFromString(msg.text);
-			Player p = sessionPlayerMap.get(msg.getSender());
-
-			try {
-				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingIndexSet()) {
-					int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
-					g.reroll(p, rerollIndex);
-					server.broadcast(p.getName() + " rerolls " + Arrays.toString(rerollIndex));
-					server.broadcast(g.getCurrentPlayer().getRoll().toString());
-					g.setInputState(InputGameState.NEEDCOMMAND);
-					sendToCurrentPlayer(g.promptPlayer(p));
-					return;
-				}
-				if (hasGameStarted() && g.isCurrentPlayer(p) && g.isAwaitingCategory()) {
-					int[] rerollIndex = cmd.getRerollIndicies().stream().mapToInt(Integer::intValue).toArray();
-					g.score(p, rerollIndex[0]);
-					server.broadcast(p.getName() + " scores in category " + rerollIndex[0]);
-					g.setInputState(InputGameState.NEEDCOMMAND);
-					server.broadcast(g.toString());
-					sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
-					return;
-				}
-
-				switch (cmd) {
-				case SAY:
-					server.broadcast(new Message(msg.getSender(), msg.text.substring(4)));
-					break;
-				case NAME:
-					String[] split = msg.text.split(" ");
-					if (split.length != 2) {
-						respond(msg, "Syntax: name <newname>");
-						break;
-					}
-					p.setName(split[1]);
-					break;
-				case START:
-					if (hasGameStarted()) {
-						respond(msg, "Game has already started.");
-						break;
-					} else {
-						g = new Game(playerSessionMap.keySet()).start();
-						server.broadcast("Game has begun!");
-						server.broadcast(g.toString());
-						sendToCurrentPlayer(g.promptPlayer(g.getCurrentPlayer()));
-					}
-					break;
-				case ENTER:
-					if (hasGameStarted() && g.isCurrentPlayer(p) && g.isFirstRoll()) {
-						g.roll(p);
-						server.broadcast(p.getName() + " rolls!");
-						server.broadcast(g.getCurrentPlayer().getRoll().toString());
-						sendToCurrentPlayer(g.promptPlayer(p));
-					}
-					break;
-				case REROLLALL:
-					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-						g.reroll(p, 1, 2, 3, 4, 5);
-						server.broadcast(p.getName() + " rerolls everything!");
-						server.broadcast(g.getCurrentPlayer().getRoll().toString());
-						sendToCurrentPlayer(g.promptPlayer(p));
-					}
-					break;
-				case REROLLSOME:
-					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-						g.setInputState(InputGameState.NEEDINDEXSET);
-						sendToCurrentPlayer(g.promptPlayer(p));
-					}
-					break;
-				case SCORE:
-					if (hasGameStarted() && g.isCurrentPlayer(p) && !g.isFirstRoll()) {
-						g.setInputState(InputGameState.NEEDCATEGORY);
-						sendToCurrentPlayer(g.promptPlayer(p));
-					}
-					break;
-				default:
-					// do nothing
-					break;
-				}
-			} catch (NotYourTurnException e) {
-				respond(msg, "It's not your turn.");
-			} catch (AlreadyScoredThereException e) {
-				respond(msg, "You've already scored in that category.");
-				g.setInputState(InputGameState.NEEDCOMMAND);
-				sendToCurrentPlayer(g.promptPlayer(p));
-			} catch (IndexOutOfBoundsException e) {
-				respond(msg, "That is not a valid category. Choose 1-13.");
-				sendToCurrentPlayer(g.promptPlayer(p));
-			}
-		}
-
-		private boolean hasGameStarted() {
-			return g != null && g.hasStarted();
-		}
-
-		// respond to a message from sender with string
-		private void respond(Message msg, String string) {
-			msg.getSender().send(string);
-		}
-
-		private void sendToCurrentPlayer(String string) {
-			Player cur = g.getCurrentPlayer();
-			playerSessionMap.get(cur).send(string);
-		}
-	}
-
-	class ClientHandler implements Runnable {
-		private final TCPConnection session;
-		private final YahtzeeServer server;
-		private volatile boolean shutdown;
-
-		ClientHandler(TCPConnection session, YahtzeeServer server) {
-			this.session = session;
-			this.server = server;
-			this.shutdown = false;
-		}
-
-		void setShutdown(boolean b) {
-			shutdown = b;
-		}
-
-		public void run() {
-			session.send("Welcome to CLI Yahtzee");
-			String inputLine;
-			while (!shutdown) {
-				// System.out.println("Listening for messages on thread " +
-				// this.hashCode());
-				inputLine = session.receive();
-				// send command to server through queue
-				// System.out.println("Adding message " + inputLine);
-				server.addMessage(session, inputLine);
-				// System.out.println("message added to queue");
-				// received exit command
-				if (shutdown) {
-					session.send("Server shutdown");
-				}
-				if ("exit".equalsIgnoreCase(inputLine)) {
-					// need to remove player
-					session.send("Bye");
-					shutdown = true;
-				}
-			}
-		}
-	}
-
 }
