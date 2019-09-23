@@ -135,15 +135,22 @@ public class YahtzeeServer implements Runnable {
 	}
 
 	// transmit to all except sender
-	public void sendToAllExcept(Message msg, String string) {
+	public void sendToAllExceptSender(Message msg, String string) {
 		for (TCPConnection c : clients) {
-			// System.out.println("Broadcasting to " + c.getId());
 			if (c != msg.getSender()) {
 				c.send(string);
 			}
 		}
 	}
 
+	public void sendToAllExceptPlayer(Player p, String string) {		
+		for (TCPConnection c : clients) {
+			if (sessionPlayerMap.get(c) != p) {
+				c.send(string);
+			}
+		}
+	}
+	
 	// direct from server, no client session attached to message
 	public void broadcast(String str) {
 		for (TCPConnection c : clients) {

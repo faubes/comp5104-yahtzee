@@ -62,7 +62,11 @@ class MessageQueueHandler implements Runnable {
 		} // commands available to all players
 		switch (cmd) {
 		case SAY:
+			System.out.println(p.getName() + " says: " + msg.getText().substring(4));
 			server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
+			break;
+		case DISPLAY:
+			server.respond(msg,  g.toString());
 			break;
 		case NAME:
 			String[] split = msg.getText().split(" ");
@@ -70,8 +74,9 @@ class MessageQueueHandler implements Runnable {
 				server.respond(msg, "Syntax: name <newname>");
 				break;
 			}
+			System.out.println(p.getName() + " changed name to " + split[1]);
 			server.respond(msg, "Changed your name to " + split[1]);
-			server.sendToAllExcept(msg, p.getName() + " has changed their name to " + split[1]);
+			server.sendToAllExceptSender(msg, p.getName() + " has changed their name to " + split[1]);
 			p.setName(split[1]);
 			break;
 		case START:
@@ -79,21 +84,27 @@ class MessageQueueHandler implements Runnable {
 				server.respond(msg, "Game has already started.");
 				break;
 			} else {
+				System.out.println("Game started by " + p.getName());
 				g = new Game(server.playerSessionMap.keySet()).start();
-				server.broadcast("Game has begun!");
+				server.respond(msg, "You start a game");
+				server.sendToAllExceptSender(msg, p.getName() + " starts a game");
 				server.broadcast(g.toString());
-				// need to prompt current player - who may not be one who starts game
+				// need to prompt current player - who may not be one who starts
+				// game
 				server.sendToPlayer(g.getCurrentPlayer(), g.promptPlayer(g.getCurrentPlayer()));
+				server.sendToAllExceptPlayer(g.getCurrentPlayer(), g.getCurrentPlayer().getName() + " is deciding what to do.");
 			}
 			break;
 		case STOP:
 			if (!hasGameStarted()) {
 				server.respond(msg, "No game in progress.");
 			} else {
+				System.out.println("Game ended by " + p.getName());
 				server.broadcast("Game has been ended by " + p.getName());
 				g.stop();
 			}
 			break;
+
 		default:
 			// catches INVALID command
 			// does nothing
@@ -101,10 +112,12 @@ class MessageQueueHandler implements Runnable {
 		}
 	}
 
-	private boolean processCommandFromCurrentPlayer(Player p, Command cmd, Message msg) throws IllegalArgumentException {
+	private boolean processCommandFromCurrentPlayer(Player p, Command cmd, Message msg)
+			throws IllegalArgumentException {
 		// we know p is current player
 		if (p != g.getCurrentPlayer()) {
-			throw new IllegalArgumentException("Attempting to process command for current player, but player not active.");
+			throw new IllegalArgumentException(
+					"Attempting to process command for current player, but player not active.");
 		}
 		try {
 			switch (g.getInputState()) {
@@ -113,10 +126,10 @@ class MessageQueueHandler implements Runnable {
 				int[] rerollIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
 				g.reroll(p, rerollIndex);
 				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
-				server.sendToAllExcept(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
+				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 
 				server.respond(msg, "You get " + p.getRoll().toString());
-				server.sendToAllExcept(msg, p.getName() + " gets " + p.getRoll().toString());
+				server.sendToAllExceptSender(msg, p.getName() + " gets " + p.getRoll().toString());
 
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				server.sendToPlayer(p, g.promptPlayer(p));
@@ -124,9 +137,19 @@ class MessageQueueHandler implements Runnable {
 			// waiting for category to score
 			case NEEDCATEGORY:
 				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
-				g.score(p, categoryIndex); // score calls endTurn, which changes current player
-				server.broadcast(p.getName() + " scores in category " + categoryIndex);
+				g.score(p, categoryIndex); // score calls endTurn, which changes
+											// current player
 				g.setInputState(InputGameState.NEEDCOMMAND);
+				server.broadcast(p.getName() + " scores in category " + categoryIndex);
+				if (g.hasEnded()) {
+					server.broadcast(g.toString());
+					return true;
+				}
+				
+				if (g.newRound()) {
+					server.broadcast("Starting turn " + g.getRound());
+				}
+				
 				server.broadcast("It is now " + g.getCurrentPlayer().getName() + "'s turn to go.");
 				server.broadcast(g.toString());
 				// score ends the turn, so need to send to current player
@@ -139,9 +162,9 @@ class MessageQueueHandler implements Runnable {
 					if (g.isFirstRoll()) {
 						g.roll(p);
 						server.respond(msg, "You roll:\n " + p.getRoll().toString());
-						server.sendToAllExcept(msg, p.getName() + " rolls: \n" + p.getRoll().toString());
+						server.sendToAllExceptSender(msg, p.getName() + " rolls: \n" + p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
-						server.sendToAllExcept(msg,  p.getName() + " is deciding what to do next.");
+						server.sendToAllExceptSender(msg, p.getName() + " is deciding what to do next.");
 						return true;
 					}
 					break;
@@ -149,10 +172,10 @@ class MessageQueueHandler implements Runnable {
 					if (!g.isFirstRoll()) {
 						g.reroll(p);
 						server.respond(msg, "You reroll everything.");
-						server.sendToAllExcept(msg, p.getName() + " rerolls everything.");
+						server.sendToAllExceptSender(msg, p.getName() + " rerolls everything.");
 						server.broadcast(p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
-						server.sendToAllExcept(msg,  p.getName() + " is deciding what to do next.");
+						server.sendToAllExceptSender(msg, p.getName() + " is deciding what to do next.");
 						return true;
 					}
 					break;
@@ -173,7 +196,7 @@ class MessageQueueHandler implements Runnable {
 					break;
 				default:
 					break;
-				} 
+				}
 				break; // end of NEEDCOMMAND state
 			default:
 				break;
@@ -192,6 +215,5 @@ class MessageQueueHandler implements Runnable {
 	private boolean hasGameStarted() {
 		return g != null && g.hasStarted();
 	}
-
 
 }

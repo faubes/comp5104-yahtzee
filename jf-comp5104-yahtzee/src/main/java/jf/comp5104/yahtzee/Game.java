@@ -54,7 +54,7 @@ public class Game {
 		if (turnCount % players.size() == 0) {
 			round++;
 		}
-		if (round > 13) {
+		if (round > 12) {
 			stop();
 		}
 	}

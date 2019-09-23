@@ -12,7 +12,7 @@ public class PlayerCommand {
 	static enum Command {
 		// inactive commands
 		INVALID("invalid"), ENTER(""), SAY("say"), NAME("name"),
-		START("start"), STOP("stop"),
+		START("start"), STOP("stop"), DISPLAY("display"),
 		// active commands
 		REROLLALL("1"), REROLLSOME("2"), SCORE("3");
 
