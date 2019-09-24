@@ -106,6 +106,22 @@ public class ScoresheetTest {
 		}
 	}
 
+	
+	@Test(expected = AlreadyScoredThereException.class)
+	public void testNotYahtzee() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(1, 1, 1, 1, 6);
+			s.score(r, 13);
+			// Rolled 4 ones, scored them as Yahtzee,
+			assertEquals("got 0 points in that category", s.getScore(13), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+			assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+			assertEquals("Total:", s.getTotal(), 0);
+			r.set(6,6,6,6,6);
+			// cannot now score Yahtzee :(
+			s.score(r, 13);
+	}
+
 	@Test
 	public void testMultipleYahtzees() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
@@ -190,6 +206,22 @@ public class ScoresheetTest {
 	}
 
 	@Test
+	public void testNot3OfAKind() {
+		Roll r = new Roll(1, 1, 2, 2, 3);
+		try {
+			s.score(r, 7);
+			// Rolled 3 ones, scored them as 3OfAKind,
+			assertEquals("got 0 points in that category", s.getScore(7), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+			assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+			assertEquals("Total:", s.getTotal(), 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void test3OfAKind() {
 		Roll r = new Roll(1, 1, 1, 2, 2);
 		try {
@@ -205,37 +237,38 @@ public class ScoresheetTest {
 		}
 	}
 
-@Test
-public void testNot4OfAKind() {
-	try {
-		Roll r = new Roll(1, 1, 1, 2, 2);
-		s.score(r, 8);
-		// Rolled 3 ones, scored them as 4OfAKind,
-		assertEquals("got 0 points in that category", s.getScore(8), 0);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
-		assertEquals("Total:", s.getTotal(), 0);
-	} catch (Exception e) {
-		e.printStackTrace();
+	@Test
+	public void testNot4OfAKind() {
+		try {
+			Roll r = new Roll(1, 1, 1, 2, 2);
+			s.score(r, 8);
+			// Rolled 3 ones, scored them as 4OfAKind,
+			assertEquals("got 0 points in that category", s.getScore(8), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+			assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+			assertEquals("Total:", s.getTotal(), 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-}
 
-@Test
-public void test4OfAKind() {
-	try {
-		Roll r = new Roll(1, 1, 1, 1, 2);
-		s.score(r, 8);
-		// Rolled 3 ones, scored them as 4OfAKind,
-		assertEquals("got 6 points in that category", s.getScore(8), 6);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
-		assertEquals("Total:", s.getTotal(), 6);
-	} catch (Exception e) {
-		e.printStackTrace();
+	@Test
+	public void test4OfAKind() {
+		try {
+			Roll r = new Roll(1, 1, 1, 1, 2);
+			s.score(r, 8);
+			// Rolled 3 ones, scored them as 4OfAKind,
+			assertEquals("got 6 points in that category", s.getScore(8), 6);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+			assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+			assertEquals("Total:", s.getTotal(), 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-}
+
 	@Test
 	public void testScoresheetsAreComparable() {
 		Roll yahtzee6 = new Roll(6, 6, 6, 6, 6);
