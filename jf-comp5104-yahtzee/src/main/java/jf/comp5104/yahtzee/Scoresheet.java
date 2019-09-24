@@ -1,6 +1,9 @@
 package jf.comp5104.yahtzee;
 
 import java.util.Map;
+
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
+
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;

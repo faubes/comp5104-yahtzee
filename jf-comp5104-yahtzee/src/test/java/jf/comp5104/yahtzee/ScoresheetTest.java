@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
+
 public class ScoresheetTest {
 
 	/* Construct a few objects to manipulate */

@@ -1,5 +1,6 @@
 package jf.comp5104.yahtzee;
 
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 
 public class Player implements Comparable<Player> {
 	static private int playerCount = 0;

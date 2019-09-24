@@ -2,10 +2,10 @@ package jf.comp5104.yahtzee.net;
 
 import java.util.Arrays;
 
-import jf.comp5104.yahtzee.AlreadyScoredThereException;
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Game.InputGameState;
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 import jf.comp5104.yahtzee.net.PlayerCommand.Command;
 import jf.comp5104.yahtzee.net.Message;
 

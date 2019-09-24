@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Set;
 
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
+
 public class Game {
 
 	public static enum InputGameState {

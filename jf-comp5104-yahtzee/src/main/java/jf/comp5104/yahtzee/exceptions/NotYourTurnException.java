@@ -1,4 +1,4 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.exceptions;
 
 @SuppressWarnings("serial")
 public class NotYourTurnException extends Exception {
