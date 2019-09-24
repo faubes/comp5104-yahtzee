@@ -262,13 +262,76 @@ public class ScoresheetTest {
 			assertEquals("got 6 points in that category", s.getScore(8), 6);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-			assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+			assertEquals("Total of lower section: 0", s.getLowerTotal(), 6);
 			assertEquals("Total:", s.getTotal(), 6);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testSmallStraight() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(1,2,3,4,4);
+		s.score(r, 10);
+		assertEquals("got 30 points in that category", s.getScore(10), 30);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 30", s.getLowerTotal(), 30);
+		assertEquals("Total:", s.getTotal(), 30);
+		s = new Scoresheet();
+		r.set(1,2,1,2,1); // not a smallStraight
+		s.score(r, 10);
+		assertEquals("got 0 points in that category", s.getScore(8), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 0);
+		assertEquals("Total:", s.getTotal(), 0);	
+	}
+	
+	@Test
+	public void testLargeStraight() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(1,2,3,4,5);
+		s.score(r, 11);
+		assertEquals("got 40 points in that category", s.getScore(11), 40);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 20", s.getLowerTotal(), 40);
+		assertEquals("Total:", s.getTotal(), 40);
+		s = new Scoresheet();
+		r.set(6,3,4,5,2); // also a Large Straight but not in order
+		s.score(r, 11);
+		assertEquals("got 40 points in that category", s.getScore(11), 40);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 20", s.getLowerTotal(), 40);
+		assertEquals("Total:", s.getTotal(), 40);
+		r.set(6,3,4,5,1); // not a Large Straight
+		s = new Scoresheet();
+		s.score(r, 11);
+		assertEquals("got 0 points in that category", s.getScore(11), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 20", s.getLowerTotal(), 0);
+		assertEquals("Total:", s.getTotal(), 0);
+		
+	}
 
+	
+	@Test
+	public void testScoreChance() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(1,2,3,4,5);
+		s.score(r, 12);
+		assertEquals("got 15 points in that category", s.getScore(12), 15);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 20", s.getLowerTotal(), 15);
+		assertEquals("Total:", s.getTotal(), 15);
+		s = new Scoresheet();
+		r.set(6,6,6,6,6); // also a Large Straight but not in order
+		s.score(r, 12);
+		assertEquals("got 30 points in that category", s.getScore(12), 30);
+	}
+	
 	@Test
 	public void testScoresheetsAreComparable() {
 		Roll yahtzee6 = new Roll(6, 6, 6, 6, 6);
