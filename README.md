@@ -1,5 +1,6 @@
 # comp5104-yahtzee
 Assignment 1 for COMP5104 - Object-Oriented Software Development
+See https://www.youtube.com/watch?v=J4HdbAPrvFk for demo.
 
 Command Line Yahtzee !
 
