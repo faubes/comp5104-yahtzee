@@ -78,6 +78,12 @@ public class ScoresheetTest {
 			s.score(r, 0);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testNotAYathzee() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(2,1,1,1,1);
+		s.score(r, 13);
+	}
+	
 	@Test
 	public void testYahtzee() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
