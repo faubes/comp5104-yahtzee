@@ -37,6 +37,15 @@ public class Roll {
 	public void reroll(int... is) throws IllegalStateException {
 		if (is.length > 5)
 			throw new IllegalStateException("Cannot reroll more than 5 dice.");
+
+		for (int i : is) {
+			diceList.get(i - 1).roll();
+		}
+
+		computeFrequency();
+	}
+
+	public static int[] indexComplement(int... is) {
 		Set<Integer> holdIndex = new HashSet<Integer>();
 		for (int i : is) {
 			if (i < 1 || i > 6) {
@@ -44,14 +53,9 @@ public class Roll {
 			}
 			holdIndex.add(i);
 		}
-		Set<Integer> rerollIndex = new HashSet<>(Arrays.asList(1,2,3,4,5));
+		Set<Integer> rerollIndex = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
 		rerollIndex.removeAll(holdIndex);
-		
-		for (Integer i : rerollIndex) {
-			diceList.get(i-1).roll();
-		}
-		
-		computeFrequency();
+		return rerollIndex.stream().mapToInt(Integer::intValue).toArray();
 	}
 
 	// for testing only change to package visibility?
@@ -103,8 +107,7 @@ public class Roll {
 		// 2) we have at least two of one kind and no more than 3.
 		// 3) or we have 5 of a kind.
 		return frequencyMap.size() == 1
-				|| (frequencyMap.size() == 2 && 
-				(frequencyOfFirstFace >= 2 && frequencyOfFirstFace <= 3));
+				|| (frequencyMap.size() == 2 && (frequencyOfFirstFace >= 2 && frequencyOfFirstFace <= 3));
 	}
 
 	public String toString() {

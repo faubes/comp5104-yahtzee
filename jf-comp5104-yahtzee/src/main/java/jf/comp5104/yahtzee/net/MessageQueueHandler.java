@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
+import jf.comp5104.yahtzee.Roll;
 import jf.comp5104.yahtzee.Yahtzee;
 import jf.comp5104.yahtzee.Game.InputGameState;
 import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
@@ -130,7 +131,9 @@ class MessageQueueHandler implements Runnable {
 			switch (g.getInputState()) {
 			// waiting for dice to reroll
 			case NEEDINDEXSET:
-				int[] rerollIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
+				int[] holdIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
+				int[] rerollIndex = Roll.indexComplement(holdIndex);
+
 				g.reroll(p, rerollIndex);
 				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
 				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));

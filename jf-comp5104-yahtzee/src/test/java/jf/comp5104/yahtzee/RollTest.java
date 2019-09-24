@@ -68,7 +68,7 @@ public class RollTest {
 		r.reroll(new int[]{1,2,3,4,5,6});
 	}
 	
-	@Test(expected = IllegalStateException.class) 
+	@Test(expected = IndexOutOfBoundsException.class) 
 	public void testCannotRerollWithBadIndex() {
 		Roll r = new Roll();
 		r.reroll(8); // there are only 6 dice
