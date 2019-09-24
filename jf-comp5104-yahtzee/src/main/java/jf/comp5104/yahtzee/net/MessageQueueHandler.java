@@ -149,12 +149,12 @@ class MessageQueueHandler implements Runnable {
 				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
 				g.score(p, categoryIndex); // score calls endTurn, which changes
 											// current player
-				g.setInputState(InputGameState.NEEDCOMMAND);
-				server.broadcast(p.getName() + " scores in category " + categoryIndex);
+				server.broadcast(p.getName() + " scores in category " + categoryIndex + " for " + p.getScore(categoryIndex));
 				if (g.hasEnded()) {
 					server.broadcast("The game has ended!");
 					server.broadcast(g.toString());
 					System.out.println("Game has ended.");
+					g.setInputState(InputGameState.NEEDCOMMAND);
 					return true;
 				}
 				
@@ -162,7 +162,8 @@ class MessageQueueHandler implements Runnable {
 					server.broadcast("Starting round " + g.getRound());
 					System.out.println("Starting round " + g.getRound());
 				}
-				
+				g.setInputState(InputGameState.NEEDCOMMAND);
+
 				server.broadcast("It is now " + g.getCurrentPlayer().getName() + "'s turn.");
 				server.broadcast(g.toString());
 				// score ends the turn, so need to send to current player

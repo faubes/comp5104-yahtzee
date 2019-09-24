@@ -60,10 +60,10 @@ public class Game {
 		if (turnCount % players.size() == 0) {
 			round++;
 			for (Player p : players) {
-				p.setRound(round);
+				p.setRound(round); // for display in scoresheet
 			}
 		}
-		if (round > 12) {
+		if (round > 13) {
 			stop();
 		}
 	}
@@ -117,7 +117,7 @@ public class Game {
 
 	public Player getWinner() {
 		// what about a tie?
-		return getPlayersSortedByScore().get(1);
+		return getPlayersSortedByScore().get(0);
 	}
 
 	public Game start() {

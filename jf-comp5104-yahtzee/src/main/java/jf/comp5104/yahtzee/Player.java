@@ -82,4 +82,8 @@ public class Player implements Comparable<Player> {
 		sb.append(Yahtzee.EOL);
 		return sb.toString();
 	}
+
+	public int getScore(int categoryIndex) {
+		return scoresheet.getScore(categoryIndex);
+	}
 }
