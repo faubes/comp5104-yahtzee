@@ -45,7 +45,7 @@ public class Roll {
 			holdIndex.add(i);
 		}
 		Set<Integer> rerollIndex = new HashSet<>(Arrays.asList(1,2,3,4,5));
-		rerollIndex.remove(holdIndex);
+		rerollIndex.removeAll(holdIndex);
 		
 		for (Integer i : rerollIndex) {
 			diceList.get(i-1).roll();

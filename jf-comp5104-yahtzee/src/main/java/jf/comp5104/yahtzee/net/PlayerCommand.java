@@ -15,8 +15,8 @@ public class PlayerCommand {
 				"share your thoughts with other players"), NAME("name", "change your name with name <whatever>"), START(
 						"start", "start a game"), STOP("stop", "end the game"), WHO("who", "display list of players"),
 		// active commands (in game)
-		DISPLAY("display", "prints out the current state of the game"), ENTER("", "<<ENTER>> Roll!"), REROLLALL("2",
-				"Reroll all"), REROLLSOME("1", "Reroll some"), SCORE("3", "Score");
+		DISPLAY("display", "prints out the current state of the game"), ENTER("", "<<ENTER>> Roll!"), REROLLSOME("1",
+				"Reroll some"), REROLLALL("2", "Reroll all"), SCORE("3", "Score");
 
 		String cmd;
 		String desc;

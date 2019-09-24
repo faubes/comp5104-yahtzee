@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
+import jf.comp5104.yahtzee.Yahtzee;
 import jf.comp5104.yahtzee.Game.InputGameState;
 import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 import jf.comp5104.yahtzee.net.PlayerCommand.Command;
@@ -134,7 +135,7 @@ class MessageQueueHandler implements Runnable {
 				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
 				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 
-				server.respond(msg, "You get " + p.getRoll().toString());
+				server.respond(msg, "You get " + Yahtzee.EOL + p.getRoll().toString());
 				server.sendToAllExceptSender(msg, p.getName() + " gets " + p.getRoll().toString());
 
 				g.setInputState(InputGameState.NEEDCOMMAND);
@@ -217,6 +218,11 @@ class MessageQueueHandler implements Runnable {
 			server.sendToPlayer(p, g.promptPlayer(p));
 		} catch (IndexOutOfBoundsException e) {
 			server.respond(msg, "That is not a valid category. Choose 1-13.");
+			server.sendToPlayer(p, g.promptPlayer(p));
+		}
+		catch (IllegalStateException e) {
+			server.respond(msg, "That is not a valid index for rerolling");
+			g.setInputState(InputGameState.NEEDCOMMAND);
 			server.sendToPlayer(p, g.promptPlayer(p));
 		}
 		return false;

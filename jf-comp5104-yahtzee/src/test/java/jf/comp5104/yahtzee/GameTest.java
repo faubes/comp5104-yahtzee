@@ -127,9 +127,9 @@ public class GameTest {
 		try {
 			g.start();
 			assertTrue("New game is in a new round", g.newRound());
-			g.addPlayer(p1);
-			g.addPlayer(p2);
-			g.addPlayer(p3);
+//			g.addPlayer(p1);
+//			g.addPlayer(p2);
+//			g.addPlayer(p3);
 			g.roll(p1);
 			g.score(p1, 1);
 			assertEquals("now returns Player 2", g.getCurrentPlayer(), p2);
