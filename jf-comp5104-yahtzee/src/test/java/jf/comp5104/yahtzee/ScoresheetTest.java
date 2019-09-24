@@ -75,21 +75,19 @@ public class ScoresheetTest {
 	@Test(expected = IndexOutOfBoundsException.class)
 	public void testInvalidScore() throws IndexOutOfBoundsException, AlreadyScoredThereException {
 		Roll r = new Roll(1, 1, 1, 1, 1);
-			s.score(r, 0);
+		s.score(r, 0);
 	}
 
 	@Test(expected = AlreadyScoredThereException.class)
 	public void testNotAYathzee() throws Exception {
-		Roll r = new Roll(2,1,1,1,1);
+		Roll r = new Roll(2, 1, 1, 1, 1);
 		s.score(r, 13);
 		assertEquals("No points for non-yahtzee.", 0, s.getScore(13));
-		r.set(1,1,1,1,1);
+		r.set(1, 1, 1, 1, 1);
 		s.score(r, 13); // not allowed to score there throw exception
-		
+
 	}
-	
-	
-	
+
 	@Test
 	public void testYahtzee() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
@@ -136,6 +134,28 @@ public class ScoresheetTest {
 		}
 	}
 
+	@Test(expected = AlreadyScoredThereException.class)
+	public void testYahtzeeThenNot() throws IndexOutOfBoundsException, AlreadyScoredThereException {
+		Roll r = new Roll(1, 1, 1, 1, 1);
+		s.score(r, 13);
+		// Rolled 5 ones, scored them as Yahtzee,
+		assertEquals("got 50 points in that category", s.getScore(13), 50);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
+		assertEquals("Total:", s.getTotal(), 50);
+		r.set(6, 6, 6, 6, 6);
+		s.score(r, 13);
+		// Rolled 5 6, scored them as Yahtzee,
+		assertEquals("got 50 points in that category", s.getScore(13), 50);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
+		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
+		assertEquals("Total of lower section: 150", s.getLowerTotal(), 150);
+		assertEquals("Total:", s.getTotal(), 150);
+		r.set(1, 2, 3, 4, 5);
+		s.score(r, 13); // throw exception
+	}
+
 	@Test
 	public void test3OfAKind() {
 		Roll r = new Roll(1, 1, 1, 1, 1);
@@ -161,7 +181,7 @@ public class ScoresheetTest {
 			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 			assertEquals("Total of lower section: 0", s.getLowerTotal(), 35);
 			assertEquals("Total:", s.getTotal(), 35);
-			//System.out.println(s.toString());
+			// System.out.println(s.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
