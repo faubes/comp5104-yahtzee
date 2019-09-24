@@ -68,6 +68,12 @@ class MessageQueueHandler implements Runnable {
 		case DISPLAY:
 			server.respond(msg,  g.toString());
 			break;
+		case WHO:
+			server.respond(msg, server.playerSessionMap.keySet().toString());
+			break;
+		case HELP:
+			server.respond(msg, PlayerCommand.Command.getCommands());
+			break;
 		case NAME:
 			String[] split = msg.getText().split(" ");
 			if (split.length != 2) {
@@ -193,6 +199,7 @@ class MessageQueueHandler implements Runnable {
 					if (!g.isFirstRoll()) {
 						g.setInputState(InputGameState.NEEDCATEGORY);
 						server.sendToPlayer(p, p.getScoresheet().toString());
+						server.sendToPlayer(p,  p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
 						return true;
 					}

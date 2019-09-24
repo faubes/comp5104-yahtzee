@@ -1,8 +1,10 @@
 package jf.comp5104.yahtzee;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +37,20 @@ public class Roll {
 	public void reroll(int... is) throws IllegalStateException {
 		if (is.length > 5)
 			throw new IllegalStateException("Cannot reroll more than 5 dice.");
+		Set<Integer> holdIndex = new HashSet<Integer>();
 		for (int i : is) {
 			if (i < 1 || i > 6) {
 				throw new IllegalStateException("Invalid index for reroll");
 			}
+			holdIndex.add(i);
+		}
+		Set<Integer> rerollIndex = new HashSet<>(Arrays.asList(1,2,3,4,5));
+		rerollIndex.remove(holdIndex);
+		
+		for (Integer i : rerollIndex) {
 			diceList.get(i-1).roll();
 		}
+		
 		computeFrequency();
 	}
 

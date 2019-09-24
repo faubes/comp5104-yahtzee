@@ -43,6 +43,10 @@ public class Game {
 	public Game(Set<Player> keySet) {
 		this();
 		players.addAll(keySet);
+		// reset everyone's score sheets
+		for (Player p : players) {
+			p.resetScoresheet();
+		}
 	}
 
 	public Player getCurrentPlayer() {
@@ -202,8 +206,9 @@ public class Game {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
 		}
 		if (rollCount >= 1 && rollCount <= 2) {
-			return "(1) Reroll everything" + Yahtzee.EOL + "(2) Reroll by index" + Yahtzee.EOL + "(3) Score"
-					+ Yahtzee.EOL;
+			return "(1) Select dice to hold, then reroll the other dice." + Yahtzee.EOL 
+					+ "(2) Reroll everything." + Yahtzee.EOL 
+					+ "(3) Score this round" + Yahtzee.EOL;
 		} else
 			return "(3) Score" + Yahtzee.EOL;
 	}

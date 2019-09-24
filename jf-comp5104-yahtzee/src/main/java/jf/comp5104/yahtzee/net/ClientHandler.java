@@ -1,5 +1,7 @@
 package jf.comp5104.yahtzee.net;
 
+import jf.comp5104.yahtzee.net.PlayerCommand.Command;
+
 public class ClientHandler implements Runnable {
 	private final TCPConnection session;
 	private final YahtzeeServer server;
@@ -17,6 +19,7 @@ public class ClientHandler implements Runnable {
 
 	public void run() {
 		session.send("Welcome to CLI Yahtzee");
+		session.send(Command.getCommands());
 		String inputLine;
 		while (!shutdown) {
 			// System.out.println("Listening for messages on thread " +

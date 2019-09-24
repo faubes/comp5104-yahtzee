@@ -35,6 +35,9 @@ public class Player implements Comparable<Player> {
 		return scoresheet.getTotal();
 	}
 
+	public void resetScoresheet() {
+		this.scoresheet = new Scoresheet(username);
+	}
 	public boolean isConnected() {
 		return connected;
 	}
