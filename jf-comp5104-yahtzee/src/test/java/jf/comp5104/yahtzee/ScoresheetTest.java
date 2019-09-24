@@ -161,7 +161,7 @@ public class ScoresheetTest {
 			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
 			assertEquals("Total of lower section: 0", s.getLowerTotal(), 35);
 			assertEquals("Total:", s.getTotal(), 35);
-			System.out.println(s.toString());
+			//System.out.println(s.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

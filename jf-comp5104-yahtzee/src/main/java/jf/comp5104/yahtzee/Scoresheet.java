@@ -15,11 +15,8 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	private int yahtzees;
 	private int round;
 
-	static String[] Categories = {
-		"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", 
-		"ThreeOfAKind", "FourOfAKind", "FullHouse", "Small Straight",
-		"Large Straight", "Chance", "Yahtzee"
-	};
+	static String[] Categories = { "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "ThreeOfAKind", "FourOfAKind",
+			"FullHouse", "Small Straight", "Large Straight", "Chance", "Yahtzee" };
 
 	public Scoresheet() {
 		this("");
@@ -40,12 +37,16 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	}
 
 	public void score(Roll r, int i) throws IndexOutOfBoundsException, AlreadyScoredThereException {
-		if (i < 1 || i > 13)
+		if (i < 1 || i > 13) {
 			throw new IndexOutOfBoundsException("Invalid category for scoring");
-		if (i != 13 && sheet.containsKey(i))
+		}
+		if (i != 13 && sheet.containsKey(i)) {
 			throw new AlreadyScoredThereException();
+		}
 		if (i == 13 && sheet.containsKey(i)) {
-			// another Yathzee?
+			if (sheet.get(i) == 0 || !r.hasYahtzee()) {
+				throw new AlreadyScoredThereException();
+			}
 			yahtzees++;
 			return;
 		}
@@ -98,11 +99,11 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	public void setRound(int i) {
 		this.round = i;
 	}
-	
+
 	public int getRound() {
 		return round;
 	}
-	
+
 	private void checkForBonus() {
 		setBonus(calculateTotalUpperSection() >= 63);
 	}
@@ -138,7 +139,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	public int getScore(int i) {
 		return sheet.getOrDefault(i, 0);
 	}
-	
+
 	// need to distinguish between zero and not scored yet
 	public String getScoreString(int i) {
 		return sheet.get(i) != null ? sheet.get(i).toString() : " ";
@@ -150,22 +151,22 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	}
 
 	private static final String lSep = "|";
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		// construct horizontal line
 		for (int i = 0; i < 121; i++) {
 			sb.append("-");
 		}
 		final String line = sb.toString();
-		
+
 		// clear builder
 		sb.delete(0, sb.length());
-		
+
 		// formatter lets you specify width and stuff for pretty printing
 		Formatter formatter = new Formatter(sb);
-		
+
 		Iterator<String> it = Arrays.asList(Categories).iterator();
 		int i = 1;
 		sb.append(line);
@@ -180,14 +181,14 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		sb.append(lSep);
 		while (it.hasNext()) {
 			formatter.format(" (%1$-2d) %2$-14s : %3$-15s |", i, it.next(), getScoreString(i));
-			if (i % 3 == 0 ) {
+			if (i % 3 == 0) {
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
 				sb.append(Yahtzee.EOL);
 				sb.append(lSep);
 			}
 
-			if (i == 6 ) {
+			if (i == 6) {
 				// print Top Totals and Bonus
 				formatter.format(" %1$-19s : %2$-15d |", "Top Sub-Total", getUpperTotal1());
 				formatter.format(" %1$-19s : %2$-15s |", "Top Bonus", bonus ? "35" : " ");
@@ -202,7 +203,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 		}
 		formatter.format(" %1$-19s : %2$-15d ", " Bonus Yahtzees", yahtzees);
 		for (int j = 0; j < 11; j++) {
-			formatter.format( "|%1$3s", yahtzees > j ? "X" : " ");
+			formatter.format("|%1$3s", yahtzees > j ? "X" : " ");
 		}
 		formatter.close();
 		sb.append(Yahtzee.EOL);

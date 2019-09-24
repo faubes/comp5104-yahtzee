@@ -103,7 +103,7 @@ public class GameTest {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(g.toString());
+		//System.out.println(g.toString());
 		assertTrue("Game finished", g.hasEnded());
 	}
 
