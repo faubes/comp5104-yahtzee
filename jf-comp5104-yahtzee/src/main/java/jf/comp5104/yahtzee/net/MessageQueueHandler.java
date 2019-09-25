@@ -68,7 +68,9 @@ class MessageQueueHandler implements Runnable {
 			server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
 			break;
 		case DISPLAY:
-			server.respond(msg,  g.toString());
+			if (g != null && g.hasStarted()) {
+				server.respond(msg, g.toString());
+			}
 			break;
 		case WHO:
 			server.respond(msg, server.playerSessionMap.keySet().toString());
@@ -100,7 +102,8 @@ class MessageQueueHandler implements Runnable {
 				// need to prompt current player - who may not be one who starts
 				// game
 				server.sendToPlayer(g.getCurrentPlayer(), g.promptPlayer(g.getCurrentPlayer()));
-				server.sendToAllExceptPlayer(g.getCurrentPlayer(), g.getCurrentPlayer().getName() + " is deciding what to do.");
+				server.sendToAllExceptPlayer(g.getCurrentPlayer(),
+						g.getCurrentPlayer().getName() + " is deciding what to do.");
 			}
 			break;
 		case STOP:
@@ -149,7 +152,8 @@ class MessageQueueHandler implements Runnable {
 				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
 				g.score(p, categoryIndex); // score calls endTurn, which changes
 											// current player
-				server.broadcast(p.getName() + " scores in category " + categoryIndex + " for " + p.getScore(categoryIndex));
+				server.broadcast(
+						p.getName() + " scores in category " + categoryIndex + " for " + p.getScore(categoryIndex));
 				if (g.hasEnded()) {
 					server.broadcast("The game has ended!");
 					server.broadcast(g.toString());
@@ -157,7 +161,7 @@ class MessageQueueHandler implements Runnable {
 					g.setInputState(InputGameState.NEEDCOMMAND);
 					return true;
 				}
-				
+
 				if (g.newRound()) {
 					server.broadcast("Starting round " + g.getRound());
 					System.out.println("Starting round " + g.getRound());
@@ -204,7 +208,7 @@ class MessageQueueHandler implements Runnable {
 					if (!g.isFirstRoll()) {
 						g.setInputState(InputGameState.NEEDCATEGORY);
 						server.sendToPlayer(p, p.getScoresheet().toString());
-						server.sendToPlayer(p,  p.getRoll().toString());
+						server.sendToPlayer(p, p.getRoll().toString());
 						server.sendToPlayer(p, g.promptPlayer(p));
 						return true;
 					}
@@ -223,8 +227,7 @@ class MessageQueueHandler implements Runnable {
 		} catch (IndexOutOfBoundsException e) {
 			server.respond(msg, "That is not a valid category. Choose 1-13.");
 			server.sendToPlayer(p, g.promptPlayer(p));
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			server.respond(msg, "That is not a valid index for rerolling");
 			g.setInputState(InputGameState.NEEDCOMMAND);
 			server.sendToPlayer(p, g.promptPlayer(p));
