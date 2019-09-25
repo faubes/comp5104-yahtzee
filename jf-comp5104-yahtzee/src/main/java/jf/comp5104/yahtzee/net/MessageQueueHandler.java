@@ -65,8 +65,10 @@ class MessageQueueHandler implements Runnable {
 		} // commands available to all players
 		switch (cmd) {
 		case SAY:
-			System.out.println(p.getName() + " says: " + msg.getText().substring(4));
-			server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
+			if (msg.getText().length() >= 4) {
+				System.out.println(p.getName() + " says: " + msg.getText().substring(4));
+				server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
+			}
 			break;
 		case DISPLAY:
 			if (hasGameStarted()) {
@@ -261,13 +263,13 @@ class MessageQueueHandler implements Runnable {
 			g.removePlayer(p);
 		}
 	}
-	
+
 	public void stopGame() {
 		if (hasGameStarted()) {
 			server.broadcast("Game stopped.");
 			g.stop();
 		}
-		
+
 	}
 
 }
