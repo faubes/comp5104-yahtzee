@@ -56,13 +56,6 @@ class MessageQueueHandler implements Runnable {
 		Command cmd = Command.getCommandFromString(msg.getText());
 		Player p = server.sessionPlayerMap.get(msg.getSender());
 
-		if (hasGameStarted() && g.isCurrentPlayer(p)) {
-			// process commands available to current player
-			if (processCommandFromCurrentPlayer(p, cmd, msg)) {
-				// do not continue if game action from current player successful
-				return;
-			}
-		} // commands available to all players
 		switch (cmd) {
 		case SAY:
 			if (msg.getText().length() >= 4) {
@@ -133,10 +126,16 @@ class MessageQueueHandler implements Runnable {
 			server.respond(msg, "See ya later");
 			server.disconnect(msg.getSender());
 			break;
-
+		case INVALID:
+			if (p == g.getCurrentPlayer()) {
+				server.sendToPlayer(p, g.promptPlayer(p));
+			}
+			break;
 		default:
-			// catches INVALID command
-			// does nothing
+			if (hasGameStarted() && g.isCurrentPlayer(p)) {
+				// process commands available to current player
+				processCommandFromCurrentPlayer(p, cmd, msg);
+			}
 			break;
 		}
 	}
@@ -151,23 +150,39 @@ class MessageQueueHandler implements Runnable {
 		try {
 			switch (g.getInputState()) {
 			// waiting for dice to reroll
+			case NEEDHOLDSET:
+				int[] holdIndex = Command.getRerollIndiciesFromString(msg.getText()).stream()
+						.mapToInt(Integer::intValue).toArray();
+
+				g.reroll(p, Roll.indexComplement(holdIndex));
+				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
+				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
+
+				server.respond(msg, "You get " + Yahtzee.EOL + p.getRoll().toString());
+				server.sendToAllExceptSender(msg, p.getName() + " gets " + Yahtzee.EOL + p.getRoll().toString());
+
+				g.setInputState(InputGameState.NEEDCOMMAND);
+				server.sendToPlayer(p, g.promptPlayer(p));
+				return true;
 			case NEEDINDEXSET:
-				int[] holdIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).toArray();
-				int[] rerollIndex = Roll.indexComplement(holdIndex);
+				int[] rerollIndex = Command.getRerollIndiciesFromString(msg.getText()).stream()
+						.mapToInt(Integer::intValue).toArray();
 
 				g.reroll(p, rerollIndex);
 				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
 				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
 
 				server.respond(msg, "You get " + Yahtzee.EOL + p.getRoll().toString());
-				server.sendToAllExceptSender(msg, p.getName() + " gets " + p.getRoll().toString());
+				server.sendToAllExceptSender(msg, p.getName() + " gets " + Yahtzee.EOL + p.getRoll().toString());
 
 				g.setInputState(InputGameState.NEEDCOMMAND);
 				server.sendToPlayer(p, g.promptPlayer(p));
 				return true;
+
 			// waiting for category to score
 			case NEEDCATEGORY:
-				int categoryIndex = cmd.getNumericValues().stream().mapToInt(Integer::intValue).findFirst().orElse(0);
+				int categoryIndex = Command.getRerollIndiciesFromString(msg.getText()).stream()
+						.mapToInt(Integer::intValue).findFirst().orElse(0);
 				g.score(p, categoryIndex); // score calls endTurn, which changes
 											// current player
 				server.broadcast(

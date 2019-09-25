@@ -37,26 +37,26 @@ public class PlayerCommand {
 			return desc;
 		}
 
-		List<Integer> getNumericValues() {
-			return rerollIndicies;
-		}
-
 		public String toString() {
 			return getCmd();
 		}
 
+		public static List<Integer> getRerollIndiciesFromString(String str) {
+			String[] split = str.split(" ");
+			if (split.length == 0) {
+				return new ArrayList<>();
+			}
+			return Arrays.stream(split).map(Integer::parseInt).collect(Collectors.toList());
+			
+		}
+		
 		public static Command getCommandFromString(String str) {
 			String[] split = str.split(" ");
-			try {
-				rerollIndicies = Arrays.stream(split).map(Integer::parseInt).collect(Collectors.toList());
-
-			} catch (NumberFormatException e) {
-				// do not care about inputs which are not valid index set
+			if (split == null || split.length == 0) {
+				return INVALID;
 			}
-
 			return Arrays.stream(Command.values()).filter(c -> c.getCmd().equalsIgnoreCase(split[0])).findFirst()
 					.orElse(Command.INVALID);
-
 		}
 
 		public static String getCommands() {

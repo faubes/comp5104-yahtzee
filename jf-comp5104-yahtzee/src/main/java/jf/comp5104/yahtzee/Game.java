@@ -11,8 +11,9 @@ public class Game {
 
 	public static enum InputGameState {
 		NEEDINDEXSET,
+		NEEDHOLDSET,
 		NEEDCATEGORY,
-		NEEDCOMMAND
+		NEEDCOMMAND, 
 	};
 	
 	
