@@ -117,7 +117,8 @@ public class Game {
 
 	public Player getWinner() {
 		// what about a tie?
-		return getPlayersSortedByScore().get(0);
+		ArrayList<Player> players = getPlayersSortedByScore();
+		return players.get(players.size()-1); // increasing order. need last
 	}
 
 	public Game start() {

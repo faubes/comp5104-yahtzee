@@ -45,8 +45,8 @@ public class YahtzeeServer implements Runnable {
 		this.pool = Executors.newFixedThreadPool(poolSize);
 		// thread safe structure
 		this.messageQueue = new LinkedBlockingQueue<Message>();
-		// list of client handling threads
-		this.clientHandlers = new ArrayList<ClientHandler>(10);
+		
+		this.clientHandlers = new ArrayList<>();
 		// list of clients
 		this.clients = new ArrayList<TCPConnection>(10);
 		// thread for processing messageQ
@@ -85,10 +85,8 @@ public class YahtzeeServer implements Runnable {
 				System.out.println("New connection: " + newConnection.getINetAddress().toString());
 				// add to list of clients
 				clients.add(newConnection);
+				addPlayer(newConnection);
 				// create new player and add to session map
-				Player p = new Player();
-				playerSessionMap.put(p, newConnection);
-				sessionPlayerMap.put(newConnection, p);
 				// ClientHandler gets input from client, adds to messageQ
 				ClientHandler clientHandler = new ClientHandler(newConnection, this);
 				clientHandlers.add(clientHandler);
@@ -102,6 +100,24 @@ public class YahtzeeServer implements Runnable {
 		shutdown();
 	}
 
+	public void addPlayer(TCPConnection connection) {
+		Player p = new Player();
+		playerSessionMap.put(p, connection);
+		sessionPlayerMap.put(connection, p);
+	}
+	
+	public void disconnect(TCPConnection connection) {
+		Player p = sessionPlayerMap.get(connection);
+		playerSessionMap.remove(p);
+		sessionPlayerMap.remove(connection);
+		for (ClientHandler h : clientHandlers) {
+			if (h.equals(connection)) {
+				h.setShutdown(true);
+				clientHandlers.remove(h);
+			}
+		}
+	}
+	
 	public int getPort() {
 		return portNumber;
 	}

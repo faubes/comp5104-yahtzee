@@ -21,7 +21,6 @@ public class TCPConnection {
 	UUID id;
 	private InetAddress INetAddress;
 
-
 	public TCPConnection(String hostname, int port) throws IOException {
 		this(new Socket(hostname, port));		
 	}
