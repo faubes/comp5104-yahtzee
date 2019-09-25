@@ -43,7 +43,8 @@ class MessageQueueHandler implements Runnable {
 					// System.out.println(msg);
 				}
 			} catch (InterruptedException e) {
-				System.err.println("Error in receive Msg?");
+				System.err.println("Listener thread interrupted, ending");
+				shutdown = true;
 			}
 		}
 	}
@@ -68,8 +69,11 @@ class MessageQueueHandler implements Runnable {
 			server.broadcast(new Message(msg.getSender(), msg.getText().substring(4)));
 			break;
 		case DISPLAY:
-			if (g != null && g.hasStarted()) {
+			if (hasGameStarted()) {
 				server.respond(msg, g.toString());
+				if (p == g.getCurrentPlayer()) {
+					server.sendToPlayer(p, g.promptPlayer(p));
+				}
 			}
 			break;
 		case WHO:
@@ -121,10 +125,10 @@ class MessageQueueHandler implements Runnable {
 				g.removePlayer(p);
 				g.stop();
 			}
-			server.respond(msg,  "See ya later");
+			server.respond(msg, "See ya later");
 			server.disconnect(msg.getSender());
 			break;
-			
+
 		default:
 			// catches INVALID command
 			// does nothing

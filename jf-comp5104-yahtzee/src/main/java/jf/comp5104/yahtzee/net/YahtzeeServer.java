@@ -108,6 +108,11 @@ public class YahtzeeServer implements Runnable {
 	
 	public void disconnect(TCPConnection connection) {
 		Player p = sessionPlayerMap.get(connection);
+		
+		if (messageQueueHandler.g.hasStarted()) {
+			messageQueueHandler.g.removePlayer(p);
+			messageQueueHandler.g.stop();
+		}
 		playerSessionMap.remove(p);
 		sessionPlayerMap.remove(connection);
 		for (ClientHandler h : clientHandlers) {
@@ -116,6 +121,7 @@ public class YahtzeeServer implements Runnable {
 				clientHandlers.remove(h);
 			}
 		}
+		clients.remove(connection);
 	}
 	
 	public int getPort() {

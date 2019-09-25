@@ -25,10 +25,15 @@ public class ClientHandler implements Runnable {
 			// System.out.println("Listening for messages on thread " +
 			// this.hashCode());
 			inputLine = session.receive();
+			if (inputLine == null) {
+				// lost connection?
+				System.out.println("Server got null: assuming connection lost and close handler");
+				server.disconnect(session);
+				shutdown = true;
+			}
 			// send command to server through queue
-			// System.out.println("Adding message " + inputLine);
 			server.addMessage(session, inputLine);
-			// System.out.println("message added to queue");
+
 			// received exit command
 			if (shutdown) {
 				session.send("Server shutdown");
