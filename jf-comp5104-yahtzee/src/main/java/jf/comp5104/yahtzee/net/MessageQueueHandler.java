@@ -155,8 +155,8 @@ class MessageQueueHandler implements Runnable {
 						.mapToInt(Integer::intValue).toArray();
 
 				g.reroll(p, Roll.indexComplement(holdIndex));
-				server.respond(msg, "You reroll " + Arrays.toString(rerollIndex));
-				server.sendToAllExceptSender(msg, p.getName() + " rerolls " + Arrays.toString(rerollIndex));
+				server.respond(msg, "You hold " + Arrays.toString(holdIndex));
+				server.sendToAllExceptSender(msg, p.getName() + " holds " + Arrays.toString(holdIndex));
 
 				server.respond(msg, "You get " + Yahtzee.EOL + p.getRoll().toString());
 				server.sendToAllExceptSender(msg, p.getName() + " gets " + Yahtzee.EOL + p.getRoll().toString());
@@ -230,9 +230,16 @@ class MessageQueueHandler implements Runnable {
 						return true;
 					}
 					break;
-				case REROLLSOME:
+				case REROLLSOMEBYINDEX:
 					if (!g.isFirstRoll()) {
 						g.setInputState(InputGameState.NEEDINDEXSET);
+						server.sendToPlayer(p, g.promptPlayer(p));
+						return true;
+					}
+					break;
+				case REROLLSOMEBYHOLDINDEX:
+					if (!g.isFirstRoll()) {
+						g.setInputState(InputGameState.NEEDHOLDSET);
 						server.sendToPlayer(p, g.promptPlayer(p));
 						return true;
 					}

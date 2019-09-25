@@ -117,9 +117,11 @@ public class GameTest {
 	public void testPromptPlayerAfterRoll() {
 		g.start();
 		g.roll(p1);
-		assertEquals("Game asks player to choose action", g.promptPlayer(p1), "(1) Select dice to hold, then reroll the other dice." + Yahtzee.EOL 
-				+ "(2) Reroll everything." + Yahtzee.EOL 
-				+ "(3) Score this round" + Yahtzee.EOL);
+		assertEquals("Game asks player to choose action", g.promptPlayer(p1), 
+				"(1) Select dice to reroll." + Yahtzee.EOL
+				+ "(2) Select dice to hold, then reroll the others. " + Yahtzee.EOL 
+				+ "(3) Reroll everything." + Yahtzee.EOL 
+				+ "(4) Score this round" + Yahtzee.EOL);
 	}
 
 	@Test

@@ -16,8 +16,9 @@ public class PlayerCommand {
 						"start", "start a game"), STOP("stop", "end the game"), WHO("who",
 								"display list of players"), SERVER("server", "info on server status"),
 		// active commands (in game)
-		DISPLAY("display", "prints out the current state of the game"), ENTER("", "<<ENTER>> Roll!"), REROLLSOME("1",
-				"Reroll some"), REROLLALL("2", "Reroll all"), SCORE("3", "Score"), QUIT("quit", "Leave the server");
+		DISPLAY("display", "prints out the current state of the game"), ENTER("", "<<ENTER>> Roll!"), REROLLSOMEBYINDEX("1", "Reroll some by choosing which dice to reroll"),
+		REROLLSOMEBYHOLDINDEX("2",
+				"Reroll some by choosing which dice to hold (not to reroll)"), REROLLALL("3", "Reroll all"), SCORE("4", "Score"), QUIT("quit", "Leave the server");
 
 		String cmd;
 		String desc;

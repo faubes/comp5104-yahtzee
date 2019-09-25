@@ -198,8 +198,11 @@ public class Game {
 			return "It's not your turn" + Yahtzee.EOL + "Please wait for " + getCurrentPlayer().getName() + "to finish!"
 					+ Yahtzee.EOL; 
 		}
-		if (getInputState() == InputGameState.NEEDINDEXSET) {
+		if (getInputState() == InputGameState.NEEDHOLDSET) {
 			return "Please enter the dice position that you want to hold. Please separate each number with a <<SPACE>>";
+		}
+		if (getInputState() == InputGameState.NEEDINDEXSET) {
+			return "Please enter the dice position that you want to reroll. Please separate each number with a <<SPACE>>";
 		}
 		if (getInputState() == InputGameState.NEEDCATEGORY) {
 			return "What category do you want to score this round against?";
@@ -208,11 +211,12 @@ public class Game {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
 		}
 		if (rollCount >= 1 && rollCount <= 2) {
-			return "(1) Select dice to hold, then reroll the other dice." + Yahtzee.EOL 
-					+ "(2) Reroll everything." + Yahtzee.EOL 
-					+ "(3) Score this round" + Yahtzee.EOL;
+			return "(1) Select dice to reroll." + Yahtzee.EOL
+					+ "(2) Select dice to hold, then reroll the others. " + Yahtzee.EOL 
+					+ "(3) Reroll everything." + Yahtzee.EOL 
+					+ "(4) Score this round" + Yahtzee.EOL;
 		} else
-			return "(3) Score" + Yahtzee.EOL;
+			return "(4) Score" + Yahtzee.EOL;
 	}
 
 	public String toString() {
