@@ -1,5 +1,7 @@
 package jf.comp5104.yahtzee.net;
 
+import java.util.UUID;
+
 import jf.comp5104.yahtzee.net.PlayerCommand.Command;
 
 public class ClientHandler implements Runnable {
@@ -44,5 +46,9 @@ public class ClientHandler implements Runnable {
 				shutdown = true;
 			}
 		}
+	}
+
+	public UUID getClientId() {
+		return session.getId();
 	}
 }

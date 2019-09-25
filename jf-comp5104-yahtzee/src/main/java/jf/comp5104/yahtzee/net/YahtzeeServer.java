@@ -114,11 +114,11 @@ public class YahtzeeServer implements Runnable {
 		playerSessionMap.remove(p);
 		sessionPlayerMap.remove(connection);
 		for (ClientHandler h : clientHandlers) {
-			if (h.equals(connection)) {
+			if (h.getClientId() == connection.getId()) {
 				h.setShutdown(true);
-				clientHandlers.remove(h);
 			}
 		}
+		clientHandlers.stream().filter(ch -> ch.getClientId() != connection.getId());
 		clients.remove(connection);
 	}
 	
