@@ -117,8 +117,8 @@ class MessageQueueHandler implements Runnable {
 			break;
 		case QUIT:
 			if (hasGameStarted()) {
-				g.removePlayer(p);
 				server.broadcast(p.getName() + " leaves. Game ends.");
+				g.removePlayer(p);
 				g.stop();
 			}
 			server.respond(msg,  "See ya later");
