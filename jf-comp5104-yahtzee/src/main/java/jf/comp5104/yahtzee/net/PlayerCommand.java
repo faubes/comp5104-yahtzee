@@ -42,7 +42,7 @@ public class PlayerCommand {
 			return getCmd();
 		}
 
-		public static List<Integer> getRerollIndiciesFromString(String str) {
+		public static List<Integer> getRerollIndiciesFromString(String str) throws NumberFormatException {
 			String[] split = str.split(" ");
 			if (split.length == 0) {
 				return new ArrayList<>();

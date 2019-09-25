@@ -126,16 +126,13 @@ class MessageQueueHandler implements Runnable {
 			server.respond(msg, "See ya later");
 			server.disconnect(msg.getSender());
 			break;
-		case INVALID:
-			if (p == g.getCurrentPlayer()) {
-				server.sendToPlayer(p, g.promptPlayer(p));
-			}
-			break;
 		default:
 			if (hasGameStarted() && g.isCurrentPlayer(p)) {
 				// process commands available to current player
 				processCommandFromCurrentPlayer(p, cmd, msg);
+				// server.sendToPlayer(p, g.promptPlayer(p));
 			}
+
 			break;
 		}
 	}
@@ -271,6 +268,10 @@ class MessageQueueHandler implements Runnable {
 			server.respond(msg, "That is not a valid index for rerolling");
 			g.setInputState(InputGameState.NEEDCOMMAND);
 			server.sendToPlayer(p, g.promptPlayer(p));
+		} catch (NumberFormatException e) {
+			server.respond(msg, "That is not a valid index for rerolling");
+			g.setInputState(InputGameState.NEEDCOMMAND);
+			server.sendToPlayer(p, g.promptPlayer(p));			
 		}
 		return false;
 	}
