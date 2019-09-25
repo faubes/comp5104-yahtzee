@@ -76,6 +76,9 @@ class MessageQueueHandler implements Runnable {
 				}
 			}
 			break;
+		case SERVER:
+			server.respond(msg, server.toString());
+			break;
 		case WHO:
 			server.respond(msg, server.playerSessionMap.keySet().toString());
 			break;
@@ -250,6 +253,21 @@ class MessageQueueHandler implements Runnable {
 
 	private boolean hasGameStarted() {
 		return g != null && g.hasStarted();
+	}
+
+	public void removePlayer(Player p) {
+		if (hasGameStarted()) {
+			server.broadcast("Removing player " + p.getName());
+			g.removePlayer(p);
+		}
+	}
+	
+	public void stopGame() {
+		if (hasGameStarted()) {
+			server.broadcast("Game stopped.");
+			g.stop();
+		}
+		
 	}
 
 }

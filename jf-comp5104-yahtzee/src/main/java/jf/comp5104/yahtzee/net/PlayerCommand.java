@@ -13,7 +13,8 @@ public class PlayerCommand {
 		// inactive commands
 		INVALID("invalid", "not a valid command"), HELP("help", "print this list"), SAY("say",
 				"share your thoughts with other players"), NAME("name", "change your name with name <whatever>"), START(
-						"start", "start a game"), STOP("stop", "end the game"), WHO("who", "display list of players"),
+						"start", "start a game"), STOP("stop", "end the game"), WHO("who",
+								"display list of players"), SERVER("server", "info on server status"),
 		// active commands (in game)
 		DISPLAY("display", "prints out the current state of the game"), ENTER("", "<<ENTER>> Roll!"), REROLLSOME("1",
 				"Reroll some"), REROLLALL("2", "Reroll all"), SCORE("3", "Score"), QUIT("quit", "Leave the server");
