@@ -231,6 +231,11 @@ public class Game {
 			sb.append("is the winner with a score of ");
 			sb.append(getWinner().getScore());
 			sb.append(Yahtzee.EOL);
+		} else {
+			sb.append("Current Player: ");
+			sb.append(getCurrentPlayer().getName());
+			sb.append(getCurrentPlayer().getRoll().toString());
+			sb.append(Yahtzee.EOL);
 		}
 		return sb.toString();
 	}

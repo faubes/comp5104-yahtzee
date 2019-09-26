@@ -52,6 +52,9 @@ public class PlayerCommand {
 		}
 		
 		public static Command getCommandFromString(String str) {
+			if (str.trim().isEmpty()) {
+				return ENTER;
+			}
 			String[] split = str.split(" ");
 			if (split == null || split.length == 0) {
 				return INVALID;
