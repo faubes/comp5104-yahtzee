@@ -18,8 +18,7 @@
 #Sample Feature Definition Template
 @RollsAndRerolls
 Feature: The current player can roll and reroll a hand of dice (5) for Yahtzee
-  I call this handful of 5 dice a roll
-  Each player has a roll and can reroll (some) up to three times per turn.
+  Each player has a roll and can reroll (some) times per turn.
 
   @firstRoll
   Scenario: The current player can roll.

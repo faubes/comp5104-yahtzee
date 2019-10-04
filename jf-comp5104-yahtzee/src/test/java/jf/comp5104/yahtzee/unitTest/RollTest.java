@@ -95,7 +95,7 @@ public class RollTest {
 	public void testHasFullHouse() {
 		Roll r = new Roll(1, 1, 2, 2, 2);
 		assertTrue("Has a full house", r.hasFullHouse());
-		r.set(5, 3); // set dice 5 to 3
+		r.set(1, 1, 2, 2, 3); // set dice 5 to 3
 		assertFalse("Does not have full house", r.hasFullHouse());
 	}
 	
@@ -103,15 +103,15 @@ public class RollTest {
 	public void testHasSmallStraight() {
 		Roll r = new Roll(1, 2, 6, 3, 4);
 		assertTrue("Has a small straight", r.hasSmallStraight());
-		r.set(5, 1); // set dice 5 to 3
-		assertFalse("Does not have full house", r.hasSmallStraight());
+		r.set(1, 2, 6, 3, 6); // set dice 5 to 3
+		assertFalse("Does not have small straight", r.hasSmallStraight());
 	}
 	
 	@Test
 	public void testHasFullStraight1() {
 		Roll r = new Roll(3, 2, 5, 1, 4);
 		assertTrue("Has a full straight", r.hasLargeStraight());
-		r.set(5, 1); // set dice 5 to 3
+		r.set(3, 2, 6, 1, 4); // set dice 5 to 3
 		assertFalse("Does not have full straight", r.hasLargeStraight());
 	}
 	
@@ -119,11 +119,11 @@ public class RollTest {
 	public void testHasYahtzee() {
 		Roll r = new Roll(1,1,1,1,1);
 		assertTrue("Has Yahtzee", r.hasYahtzee());
-		r.set(1, 2);
+		r.set(1,1,1,1,6);
 		assertFalse("Has Yahtzee", r.hasYahtzee());
 		r.set(6,6,6,6,6);
 		assertTrue("Has Yahtzee", r.hasYahtzee());
-		r.set(5,5);
+		r.set(1,1,1,6,6);
 		assertFalse("Has Yahtzee", r.hasYahtzee());
 		
 	}
