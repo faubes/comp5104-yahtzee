@@ -1,8 +1,11 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.unitTest;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import jf.comp5104.yahtzee.Roll;
+import jf.comp5104.yahtzee.Yahtzee;
 
 public class RollTest {
 

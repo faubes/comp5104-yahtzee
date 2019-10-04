@@ -1,6 +1,7 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.unitTest;
 
 import jf.comp5104.yahtzee.Die;
+import jf.comp5104.yahtzee.Yahtzee;
 
 import org.junit.Test;
 

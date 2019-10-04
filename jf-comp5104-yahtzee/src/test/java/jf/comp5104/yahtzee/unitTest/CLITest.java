@@ -1,9 +1,10 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.unitTest;
 
 import static org.junit.Assert.*;
 import java.io.*;
 import org.junit.Test;
 
+import jf.comp5104.yahtzee.Yahtzee;
 import jf.comp5104.yahtzee.net.YahtzeeServer;
 
 // https://www.developer.com/tech/article.php/3669436/test-driving-a-java-command-line-application.htm

@@ -1,9 +1,11 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.unitTest;
 
 import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import jf.comp5104.yahtzee.Roll;
+import jf.comp5104.yahtzee.Scoresheet;
 import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 
 public class ScoresheetTest {

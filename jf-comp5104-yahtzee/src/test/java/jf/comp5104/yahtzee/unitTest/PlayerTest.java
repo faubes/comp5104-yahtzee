@@ -1,6 +1,9 @@
-package jf.comp5104.yahtzee;
+package jf.comp5104.yahtzee.unitTest;
 
 import org.junit.*;
+
+import jf.comp5104.yahtzee.Player;
+import jf.comp5104.yahtzee.Roll;
 
 import static org.junit.Assert.*;
 
