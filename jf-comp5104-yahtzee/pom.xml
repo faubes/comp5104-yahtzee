@@ -46,12 +46,14 @@ Focus on Test Driven Development, Maven build &amp; dependency mgt, Object-orien
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-java</artifactId>
 			<version>4.7.2</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-core -->
 		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-core</artifactId>
 			<version>4.7.2</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

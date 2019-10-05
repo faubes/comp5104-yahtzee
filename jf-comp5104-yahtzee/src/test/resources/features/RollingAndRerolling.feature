@@ -20,21 +20,22 @@
 Feature: The current player can roll and reroll a hand of dice (5) for Yahtzee
   Each player has a roll and can reroll (some) times per turn.
 
+  Background: 
+    Given A game has started
+
   @firstRoll
   Scenario: The current player can roll.
-    Given That a game has started
-    And You are the current player
+    Given You are the current player
     And You have not yet rolled
     When You roll
     Then You get a new set of 5 dice
 
   @rerollByHoldIndex
-  Scenario Outline: The current player, having rolled once,
+  Scenario: The current player, having rolled once,
     can hold dice and reroll others.
 
-    Given That a game has started
-    And You are the current player
+    Given You are the current player
     And You have rolled at least once
-    And You have not already rerolled twice 
+    And You have not already rerolled twice
     When You hold some dice
     Then You reroll the others
