@@ -8,9 +8,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = {"pretty"})
-//@CucumberOptions(features = { "classpath:testfiles/MacroValidation.feature" }, glue = {
-//		"jf.comp5104.yahtzee.cucumberTestRunners" }, dryRun = false, monochrome = true, tags = "@macroFilter")
 
-public class RollingAndRerollingTest {
-
+public class ScoringTest {
 }

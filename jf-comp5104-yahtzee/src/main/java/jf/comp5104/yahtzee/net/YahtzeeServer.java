@@ -5,12 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Yahtzee;
 
@@ -33,8 +30,8 @@ public class YahtzeeServer implements Runnable {
 	private ArrayList<ClientHandler> clientHandlers;
 	HashMap<Player, TCPConnection> playerSessionMap; // package visibility for MessageQueueHandler
 	HashMap<TCPConnection, Player> sessionPlayerMap; // package visibility for MessageQueueHandler
-	protected boolean shutdown;
-	protected BlockingQueue<Message> messageQueue;
+	private boolean shutdown;
+	private BlockingQueue<Message> messageQueue;
 
 	public YahtzeeServer(String hostname, int port, int poolSize) throws IOException {
 		// socket and info
@@ -42,7 +39,10 @@ public class YahtzeeServer implements Runnable {
 		this.portNumber = port;
 		this.serverSocket = new ServerSocket(port);
 		// thread executor
-		this.pool = Executors.newFixedThreadPool(poolSize);
+		ThreadFactory namedThreadFactory =
+				new ThreadFactoryBuilder().setNameFormat("client-thread-%d").build();
+
+		this.pool = Executors.newFixedThreadPool(poolSize, namedThreadFactory);
 		// thread safe structure
 		this.messageQueue = new LinkedBlockingQueue<Message>();
 		
@@ -55,7 +55,6 @@ public class YahtzeeServer implements Runnable {
 		
 		this.playerSessionMap = new HashMap<Player, TCPConnection>();
 		this.sessionPlayerMap = new HashMap<TCPConnection, Player>();
-
 		// System.out.println("Server socket " + hostName + " : " + port);
 
 	}

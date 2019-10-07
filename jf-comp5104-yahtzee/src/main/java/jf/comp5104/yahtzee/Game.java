@@ -41,6 +41,7 @@ public class Game {
 		this("Default Game");
 	}
 
+
 	public Game(Set<Player> keySet) {
 		this();
 		players.addAll(keySet);
@@ -79,6 +80,10 @@ public class Game {
 
 	public String getName() {
 		return this.gameName;
+	}
+
+	public int getRollCount() {
+		return rollCount;
 	}
 
 	public void addPlayer(Player p) {
@@ -186,7 +191,7 @@ public class Game {
 	}
 
 	public void reroll(Player p, int... is) {
-		if (rollCount >= 3) {
+		if (getRollCount() >= 3) {
 			throw new IllegalStateException("Cannot reroll more than twice");
 		}
 		p.reroll(is);
@@ -207,10 +212,10 @@ public class Game {
 		if (getInputState() == InputGameState.NEEDCATEGORY) {
 			return "What category do you want to score this round against?";
 		}
-		if (rollCount == 0) {
+		if (getRollCount() == 0) {
 			return "Press ENTER to Roll!" + Yahtzee.EOL;
 		}
-		if (rollCount >= 1 && rollCount <= 2) {
+		if (getRollCount() >= 1 && getRollCount() <= 2) {
 			return "(1) Select dice to reroll." + Yahtzee.EOL
 					+ "(2) Select dice to hold, then reroll the others. " + Yahtzee.EOL 
 					+ "(3) Reroll everything." + Yahtzee.EOL 

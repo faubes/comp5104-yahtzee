@@ -46,6 +46,7 @@ public class ClientHandler implements Runnable {
 				shutdown = true;
 			}
 		}
+		Thread.currentThread().interrupt();
 	}
 
 	public UUID getClientId() {

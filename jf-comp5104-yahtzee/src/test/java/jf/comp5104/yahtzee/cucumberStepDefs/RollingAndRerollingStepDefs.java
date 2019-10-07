@@ -1,69 +1,92 @@
 package jf.comp5104.yahtzee.cucumberStepDefs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
+import jf.comp5104.yahtzee.Roll;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class RollingAndRerollingStepDefs {
-	Game g;
-	Player p;
+    Game g;
+    Player p;
+    private List<Integer> idx = new ArrayList<>();
 
-	@Given("A game has started")
-	public void a_game_has_started() {
-		g = new Game();
-		p = new Player();
-		g.addPlayer(p);
-		g.start();
-	}
+    @Given("You start a game")
+    public void youHaveAPlayer() {
+        p = new Player();
+        g = new Game();
+        g.addPlayer(p);
+        g.start();
+    }
 
-	@Given("You are the current player")
-	public void you_are_the_current_player() {
-		// kinda pointless, but ok.
-		assertEquals(p, g.getCurrentPlayer());
-	}
+    @Given("A game has started")
+    public void a_game_has_started() {
+        assertTrue(g.hasStarted());
+    }
 
-	@Given("You have not yet rolled")
-	public void you_have_not_yet_rolled() {
-		// also, brand new game, new player but
-		assertTrue(g.isFirstRoll());
-	}
 
-	@When("You roll")
-	public void you_roll() {
-		p.roll();
-	}
+    @Given("You have not yet rolled")
+    public void you_have_not_yet_rolled() {
+        assertTrue(g.isFirstRoll());
+    }
 
-	@Then("You get a new set of {int} dice")
-	public void you_get_a_new_set_of_dice(Integer int1) {
-		p.getRoll();
-	}
 
-	@Given("You have rolled at least once")
-	public void you_have_rolled_at_least_once() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+    @When("You roll")
+    public void you_roll() {
+        g.roll(p);
+    }
 
-	@Given("You have not already rerolled twice")
-	public void you_have_not_already_rerolled_twice() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+    @Then("You get a new set of dice")
+    public void youGetANewSetOfDice() {
+        assertTrue(p.getRoll() != null);
+    }
 
-	@When("You hold some dice")
-	public void you_hold_some_dice() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+    @Given("You have rolled once")
+    public void you_have_rolled_once() {
+        g.roll(p);
+    }
 
-	@Then("You reroll the others")
-	public void you_reroll_the_others() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+    @Then("You get a new set of dice values")
+    public void youGetANewSetOfDiceValues() {
+        assertNotNull(g.getCurrentPlayer().getRoll());
+    }
+
+    @Given("The player has rolled once")
+    public void thePlayerHasRolledOnce() {
+        g.roll(p);
+    }
+
+    @When("You hold dice {int}, {int}, {int}")
+    public void youHoldDice(int arg0, int arg1, int arg2) {
+        idx.clear();
+        idx.add(arg0);
+        idx.add(arg1);
+        idx.add(arg2);
+    }
+
+    @Then("You hold {int}, {int}, {int} and reroll dice {int}, {int}")
+    public void youHoldAndRerollDice(int arg0, int arg1, int arg2, int arg3, int arg4) {
+        int[] actualRerollIndex = Roll.indexComplement(arg0, arg1, arg2);
+        g.reroll(p, actualRerollIndex);
+        assertEquals(actualRerollIndex[0], arg3);
+        assertEquals(actualRerollIndex[1], arg4);
+    }
+
+    @Given("The player has rolled twice")
+    public void thePlayerHasRolledTwice() {
+        g.roll(p);
+        g.reroll(p);
+    }
+
+    @When("You reroll {int}, {int}, {int}")
+    public void youReroll(int arg0, int arg1, int arg2) {
+        // do nothing?
+    }
 }

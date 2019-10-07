@@ -68,6 +68,7 @@ public class YahtzeeClient implements Runnable {
 			}
 		}
 		System.out.println("Disconnected.");
+		Thread.currentThread().interrupt();
 	}
 
 	class ServerHandler implements Runnable {
@@ -108,7 +109,9 @@ public class YahtzeeClient implements Runnable {
 				}
 
 			}
+			Thread.currentThread().interrupt();
 		}
+
 	}
 
 }

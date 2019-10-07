@@ -17,26 +17,20 @@
 ## (Comments)
 #Sample Feature Definition Template
 @RollsAndRerolls
-Feature: The current player can roll and reroll a hand of dice (5) for Yahtzee
-  Each player has a roll and can reroll (some) times per turn.
+Feature: Rolls can be score into categories
 
-  Background: 
-    Given You start a game
+  Background:
+    Given Player has a roll to score
 
   @firstRoll
-  Scenario: Player starts turn by rolling.
-    Given You have not yet rolled
-    When You roll
-    Then You get a new set of dice values
+  Scenario Outline: Player scoring the upper categories (1-6)
+    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category <category>
+    Then You get <score> in category <category>
 
-  @secondRoll
-  Scenario: Player continues turn by re-rolling.
-    Given The player has rolled once
-    When You hold dice 1, 2, 4
-    Then You hold 1, 2, 4 and reroll dice 3, 5
+    Examples:
+      | val1 | val2 | val3 | val4 | val5 | category | score |
+      | 1    | 1    | 1    | 1    | 1    | 1        | 5     |
+      | 2    | 3    | 4    | 5    | 6    | 1        | 0     |
+      | 1    | 1    | 2    | 3    | 4    | 1        | 2     |
+      | 2    | 3    | 4    | 1    | 1    | 1        | 2     |
 
-  @thirdRoll
-  Scenario: Player re-rolls third time
-    Given The player has rolled twice
-    When You reroll 1, 2, 3
-    Then You get a new set of dice values
