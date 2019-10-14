@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import jf.comp5104.yahtzee.Game;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.Roll;
+import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 import org.junit.Assert;
 
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ public class GameLogicStepDefs {
     private Game g;
     private Player p;
 
-    @Given("A game has started")
-    public void gameHasStarted() {
-        p = new Player();
+    @Given("A game with {int} players has started")
+    public void gameHasStarted(int numPlayers) {
         g = new Game();
-        g.addPlayer(p);
+        for (int i = 0; i < numPlayers; i++ ) {
+            p = new Player();
+            g.addPlayer(p);
+        }
         g.start();
         assertTrue(g.hasStarted());
     }
@@ -58,7 +61,7 @@ public class GameLogicStepDefs {
 
     @Given("It is player's turn")
     public void itIsPlayerSTurn() {
-        assertEquals(g.getCurrentPlayer(), p);
+        p = g.getCurrentPlayer();
     }
 
     @Then("Player may reroll")
@@ -83,5 +86,21 @@ public class GameLogicStepDefs {
             return;
         }
         Assert.fail();
+    }
+
+
+    @When("Every player has had a turn")
+    public void everyPlayerHasHadATurn() throws Exception {
+        for (int i = 0; i < g.getNumberOfPlayers(); i++) {
+            p = g.getCurrentPlayer();
+            g.roll(p);
+            g.score(p, 12);
+        }
+    }
+
+
+    @Then("Round {int} begins")
+    public void roundBegins(int round) {
+        assertEquals(round, g.getRound());
     }
 }

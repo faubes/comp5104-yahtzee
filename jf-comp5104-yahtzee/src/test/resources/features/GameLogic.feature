@@ -1,21 +1,4 @@
-#Author: joelfaubert@gmail.com
-#Keywords Summary : dice roll rolling random
-#Feature: List of scenarios.
-#Scenario: Business rule through list of steps with arguments.
-#Given: Some precondition step
-#When: Some key actions
-#Then: To observe outcomes or validation
-#And,But: To enumerate more Given,When,Then steps
-#Scenario Outline: List of steps for data-driven as an Examples and <placeholder>
-#Examples: Container for s table
-#Background: List of steps run before each of the scenarios
-#""" (Doc Strings)
-#| (Data Tables)
-#@ (Tags/Labels):To group Scenarios
-#<> (placeholder)
-#""
-## (Comments)
-#Sample Feature Definition Template
+
 @GameLogic
 Feature: Game Rules
   The current player can roll and reroll a hand of dice (5) for Yahtzee
@@ -24,26 +7,34 @@ Feature: Game Rules
   The game ends after 13 rounds.
 
   Background: 
-    Given A game has started
-    Given It is player's turn
+    Given A game with 3 players has started
 
   @firstRoll
   Scenario: Player starts turn by rolling.
-    Given Player has not yet rolled
+    Given It is player's turn
+    And Player has not yet rolled
     When Player rolls
     Then Player gets a new set of 5 dice
 
   @secondRoll
   Scenario: Player continues turn by re-rolling.
-    Given Player has rolled once
+    Given It is player's turn
+    And Player has rolled once
     Then Player may reroll
 
   @thirdRoll
   Scenario: Player re-rolls third time.
-    Given Player has rolled twice
+    Given It is player's turn
+    And Player has rolled twice
     Then Player may reroll
 
   @noFourthRoll
   Scenario: Player can only roll three times
-    Given Player has rolled thrice
+    Given It is player's turn
+    And Player has rolled thrice
     Then Player cannot reroll
+
+    @oneRound
+    Scenario: Three players can play a round
+      When Every player has had a turn
+      Then Round 2 begins
