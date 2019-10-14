@@ -1,4 +1,3 @@
-
 @GameLogic
 Feature: Game Rules
   The current player can roll and reroll a hand of dice (5) for Yahtzee
@@ -6,7 +5,7 @@ Feature: Game Rules
   Each player ends turn by scoring in one of 13 categories.
   The game ends after 13 rounds.
 
-  Background: 
+  Background:
     Given A game with 3 players has started
 
   @firstRoll
@@ -34,7 +33,7 @@ Feature: Game Rules
     And Player has rolled thrice
     Then Player cannot reroll
 
-    @oneRound
-    Scenario: Three players can play a round
-      When Every player has had a turn
-      Then Round 2 begins
+  @oneRound
+  Scenario: Three players can play a round
+    When Every player has had a turn
+    Then Round 2 begins
