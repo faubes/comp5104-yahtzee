@@ -16,27 +16,34 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@RollsAndRerolls
-Feature: The current player can roll and reroll a hand of dice (5) for Yahtzee
+@GameLogic
+Feature: Game Rules
+  The current player can roll and reroll a hand of dice (5) for Yahtzee
   Each player has a roll and can reroll (some) times per turn.
+  Each player ends turn by scoring in one of 13 categories.
+  The game ends after 13 rounds.
 
   Background: 
-    Given You start a game
+    Given A game has started
+    Given It is player's turn
 
   @firstRoll
   Scenario: Player starts turn by rolling.
-    Given You have not yet rolled
-    When You roll
-    Then You get a new set of dice values
+    Given Player has not yet rolled
+    When Player rolls
+    Then Player gets a new set of 5 dice
 
   @secondRoll
   Scenario: Player continues turn by re-rolling.
-    Given The player has rolled once
-    When You hold dice 1, 2, 4
-    Then You hold 1, 2, 4 and reroll dice 3, 5
+    Given Player has rolled once
+    Then Player may reroll
 
   @thirdRoll
-  Scenario: Player re-rolls third time
-    Given The player has rolled twice
-    When You reroll 1, 2, 3
-    Then You get a new set of dice values
+  Scenario: Player re-rolls third time.
+    Given Player has rolled twice
+    Then Player may reroll
+
+  @noFourthRoll
+  Scenario: Player can only roll three times
+    Given Player has rolled thrice
+    Then Player cannot reroll

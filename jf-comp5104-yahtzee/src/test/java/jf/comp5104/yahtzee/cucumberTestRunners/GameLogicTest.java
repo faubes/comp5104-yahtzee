@@ -11,6 +11,6 @@ import org.junit.runner.RunWith;
 //@CucumberOptions(features = { "classpath:testfiles/MacroValidation.feature" }, glue = {
 //		"jf.comp5104.yahtzee.cucumberTestRunners" }, dryRun = false, monochrome = true, tags = "@macroFilter")
 
-public class RollingAndRerollingTest {
+public class GameLogicTest {
 
 }

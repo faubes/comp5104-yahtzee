@@ -20,14 +20,14 @@ public class ScoringStepDefs {
         p.roll();
     }
 
-    @When("You score {int}, {int}, {int}, {int}, {int} into category {int}")
-    public void you_score_into_category(Integer d1, Integer d2, Integer d3, Integer d4, Integer d5, Integer category) throws AlreadyScoredThereException {
+    @When("Player scores {int}, {int}, {int}, {int}, {int} into category {int}")
+    public void playerScoresRollInCategory(Integer d1, Integer d2, Integer d3, Integer d4, Integer d5, Integer category) throws AlreadyScoredThereException {
         p.getRoll().set(d1, d2, d3, d4, d5);
         p.score(category);
     }
 
-    @Then("You get {int} in category {int}")
-    public void you_get_in_category(Integer score, Integer category) {
+    @Then("Player gets {int} in category {int}")
+    public void playerGetsScoreInCategory(Integer score, Integer category) {
         assertEquals(score.intValue(), p.getScore(category));
     }
 

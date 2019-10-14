@@ -17,15 +17,15 @@
 ## (Comments)
 #Sample Feature Definition Template
 @Scoring
-Feature: Rolls can be score into categories
+Feature: Scoring rolls into categories
 
   Background:
     Given Player has a roll to score
 
   @ScoreFirstSixCategories
   Scenario Outline: Player scoring the upper categories (1-6)
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category <category>
-    Then You get <score> in category <category>
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category <category>
+    Then Player gets <score> in category <category>
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | category | score |
@@ -35,7 +35,7 @@ Feature: Rolls can be score into categories
       | 1    | 1    | 1    | 3    | 1    | 3        | 3     |
       | 1    | 1    | 4    | 4    | 1    | 4        | 8     |
       | 5    | 5    | 5    | 1    | 5    | 5        | 20    |
-      | 6    | 6    | 6    | 6    | 6    | 6        | 36    |
+      | 6    | 6    | 6    | 6    | 6    | 6        | 30    |
       # rolls worth 0
       | 2    | 2    | 2    | 2    | 2    | 1        | 0     |
       | 1    | 1    | 1    | 1    | 1    | 2        | 0     |
@@ -51,8 +51,8 @@ Feature: Rolls can be score into categories
 
   @ScoreThreeOfAKind
   Scenario Outline: Player scoring Three of a Kind
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 7
-    Then You get <score> in category 7
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 7
+    Then Player gets <score> in category 7
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -69,8 +69,8 @@ Feature: Rolls can be score into categories
 
   @ScoreFourOfAKind
   Scenario Outline: Player scoring Four of a Kind
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 8
-    Then You get <score> in category 8
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 8
+    Then Player gets <score> in category 8
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -87,8 +87,8 @@ Feature: Rolls can be score into categories
 
   @ScoreFullHouse
   Scenario Outline: Player scoring Full House
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 9
-    Then You get <score> in category 9
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 9
+    Then Player gets <score> in category 9
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -105,8 +105,8 @@ Feature: Rolls can be score into categories
 
   @ScoreSmallStraight
   Scenario Outline: Player scoring Small Straight
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 10
-    Then You get <score> in category 10
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 10
+    Then Player gets <score> in category 10
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -121,8 +121,8 @@ Feature: Rolls can be score into categories
 
   @ScoreSmallStraight
   Scenario Outline: Player scoring Large Straight
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 11
-    Then You get <score> in category 11
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 11
+    Then Player gets <score> in category 11
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -139,8 +139,8 @@ Feature: Rolls can be score into categories
 
   @ScoreChance
   Scenario Outline: Player scoring Chance
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 12
-    Then You get <score> in category 12
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 12
+    Then Player gets <score> in category 12
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
@@ -150,8 +150,8 @@ Feature: Rolls can be score into categories
 
   @ScoreYahtzee
   Scenario Outline: Player scoring Yahtzee
-    When You score <val1>, <val2>, <val3>, <val4>, <val5> into category 13
-    Then You get <score> in category 13
+    When Player scores <val1>, <val2>, <val3>, <val4>, <val5> into category 13
+    Then Player gets <score> in category 13
 
     Examples:
       | val1 | val2 | val3 | val4 | val5 | score |
