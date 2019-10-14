@@ -34,6 +34,8 @@ public class Roll {
 		computeFrequency();
 	}
 
+
+
 	public void reroll(int... is) throws IllegalStateException {
 		if (is.length > 5)
 			throw new IllegalStateException("Cannot reroll more than 5 dice.");
@@ -86,12 +88,21 @@ public class Roll {
 		return diceList.size();
 	}
 
-	public boolean equals(Roll or) {
-		List<Die> one = new ArrayList<Die>(or.diceList);
-		List<Die> two = new ArrayList<Die>(diceList);
-		Collections.sort(one);
-		Collections.sort(two);
-		return one.equals(two);
+	public boolean equals(Object or) {
+		if (or == this) {
+			return true;
+		}
+
+		if (!(or instanceof Roll)) {
+			return false;
+		}
+
+//		List<Die> one = new ArrayList<>(((Roll)or).diceList);
+//		List<Die> two = new ArrayList<>(diceList);
+//		Collections.sort(one);
+//		Collections.sort(two);
+//		return one.equals(two);
+		return diceList.containsAll(((Roll) or).diceList) && ((Roll)or).diceList.containsAll(diceList);
 	}
 
 	// roll contains i copies of j

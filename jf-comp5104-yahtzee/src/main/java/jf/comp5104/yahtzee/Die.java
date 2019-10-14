@@ -29,6 +29,17 @@ public class Die implements Comparable<Die> {
 		return val;
 	}
 
+	public boolean equals(Object od) {
+		if (od == this) {
+			return true;
+		}
+
+		if (!(od instanceof Die)) {
+			return false;
+		}
+		return this.getValue() == ((Die)od).getValue();
+	}
+
 	public String toString() {
 		StringBuilder sbuilder = new StringBuilder();
 		sbuilder.append(Die.topAndBottom);
