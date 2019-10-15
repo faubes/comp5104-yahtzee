@@ -144,3 +144,9 @@ Feature: Scoring rolls into categories
       | 1    | 2    | 3    | 4    | 6    | 0     |
       | 1    | 1    | 2    | 2    | 3    | 0     |
       | 1    | 6    | 6    | 6    | 6    | 0     |
+
+    @ScoreYahtzeeBonus
+    Scenario:
+      Given Player has already scored one Yahtzee
+      When Player scores another Yahtzee
+      Then Player gets bonus points

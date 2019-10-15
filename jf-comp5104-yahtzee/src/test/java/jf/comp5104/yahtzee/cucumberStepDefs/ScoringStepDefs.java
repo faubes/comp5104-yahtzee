@@ -31,4 +31,20 @@ public class ScoringStepDefs {
         assertEquals(score.intValue(), p.getScore(category));
     }
 
+    @Given("Player has already scored one Yahtzee")
+    public void playerHasAlreadyScoredOneYahtzee() throws AlreadyScoredThereException {
+        p.getRoll().set(6,6,6,6,6);
+        p.score(13);
+    }
+
+    @When("Player scores another Yahtzee")
+    public void playerScoresAnotherYahtzee() throws AlreadyScoredThereException {
+        p.getRoll().set(1,1,1,1,1);
+        p.score(13);
+    }
+
+    @Then("Player gets bonus points")
+    public void playerGetsBonusPoints() {
+        assertEquals(1, p.getScoresheet().getYahtzeeBonus());
+    }
 }

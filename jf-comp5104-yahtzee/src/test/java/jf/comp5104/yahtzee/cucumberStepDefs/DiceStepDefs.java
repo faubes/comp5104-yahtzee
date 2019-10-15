@@ -15,12 +15,12 @@ public class DiceStepDefs {
 
     private Roll r1, r2;
 
-    @When("One roll {int}, {int}, {int}, {int}, {int}")
+    @Given("One roll {int}, {int}, {int}, {int}, {int}")
     public void oneRoll(Integer int1, Integer int2, Integer int3, Integer int4, Integer int5) {
         r1 = new Roll(int1, int2, int3, int4, int5);
     }
 
-    @When("Another roll {int} {int}, {int}, {int}, {int}")
+    @Given("Another roll {int}, {int}, {int}, {int}, {int}")
     public void anotherRoll(Integer int1, Integer int2, Integer int3, Integer int4, Integer int5) {
         r2 = new Roll(int1, int2, int3, int4, int5);
     }
@@ -31,4 +31,8 @@ public class DiceStepDefs {
         assertTrue(r1.equals(r2));
     }
 
+    @Then("There are {int} {int}'s")
+    public void numberOfMultiples(int num, int val) {
+        assertEquals(num, r1.getMultiple(val));
+    }
 }
