@@ -1,8 +1,8 @@
 @DiceLogic
-Feature: A set of dice can be evaluated for multiples, full house and so on.
+Feature: Dice Logic
 
   @equivalentRolls
-  Scenario Outline:
+  Scenario Outline: Equivalent rolls
     When One roll <r1>, <r2>, <r3>, <r4>, <r5>
     And Another roll <r6> <r7>, <r8>, <r9>, <r10>
     Then Roll one and roll two are equivalent

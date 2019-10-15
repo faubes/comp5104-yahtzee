@@ -7,9 +7,7 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty"})
-//@CucumberOptions(features = { "classpath:testfiles/MacroValidation.feature" }, glue = {
-//		"jf.comp5104.yahtzee.cucumberTestRunners" }, dryRun = false, monochrome = true, tags = "@macroFilter")
+@CucumberOptions(plugin = {"pretty"}, features = "src/test/resources", glue = "jf.comp5104.yahtzee.cucumberStepDefs")
 
 public class GameLogicTest {
 
