@@ -14,18 +14,28 @@ Feature: Game Rules
     And Player has not yet rolled
     When Player rolls
     Then Player gets a new set of 5 dice
+    And Player can score
 
   @secondRoll
   Scenario: Player continues turn by re-rolling.
     Given It is player's turn
     And Player has rolled once
     Then Player may reroll
+    And Player can score
+
+  @secondRollSome
+  Scenario: Player continues turn by re-rolling.
+    Given It is player's turn
+    And Player has rolled once
+    Then Player may reroll the first and second die
+    And Player can score
 
   @thirdRoll
   Scenario: Player re-rolls third time.
     Given It is player's turn
     And Player has rolled twice
     Then Player may reroll
+    And Player can score
 
   @noFourthRoll
   Scenario: Player can only roll three times
@@ -37,3 +47,8 @@ Feature: Game Rules
   Scenario: Three players can play a round
     When Every player has had a turn
     Then Round 2 begins
+
+  @endGame
+  Scenario: Player can end the game
+    When Player ends the game
+    Then Game is over

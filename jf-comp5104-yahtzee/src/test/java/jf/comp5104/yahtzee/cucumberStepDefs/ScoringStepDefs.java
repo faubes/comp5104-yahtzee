@@ -7,7 +7,7 @@ import io.cucumber.java.en.When;
 import jf.comp5104.yahtzee.Player;
 import jf.comp5104.yahtzee.exceptions.AlreadyScoredThereException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ScoringStepDefs {
     Player p;
@@ -45,6 +45,40 @@ public class ScoringStepDefs {
 
     @Then("Player gets bonus points")
     public void playerGetsBonusPoints() {
-        assertEquals(1, p.getScoresheet().getYahtzeeBonus());
+    }
+
+    @Then("Player gets {int} bonus points for multiple Yahtzees")
+    public void playerGetsBonusPoints(int bonusPoints) {
+        assertEquals(bonusPoints, p.getScoresheet().getYahtzees() * 100);
+    }
+
+    @Given("Player has scored enough to earn Upper Section Bonus")
+    public void playerHasScoredEnoughToEarnUpperSectionBonus() throws AlreadyScoredThereException {
+        p.getRoll().set(1,1,1,3,3);
+        p.score(1);
+        p.getRoll().set(2,2,2,3,3);
+        p.score(2);
+        p.getRoll().set(3,3,3,4,4);
+        p.score(3);
+        p.getRoll().set(4,4,4,5,5);
+        p.score(4);
+        p.getRoll().set(5,5,5,4,4);
+        p.score(5);
+        p.getRoll().set(6,6,6,4,4);
+        p.score(6);
+    }
+
+    @Then("Player earns Upper Section Bonus")
+    public void playerEarnsUpperSectionBonus() {
+        assertTrue(p.getScoresheet().getUpperSectionBonus());
+    }
+
+    @Given("Player has not scored enough to earn Upper Section Bonus")
+    public void playerHasNotScoredEnoughToEarnUpperSectionBonus() {
+    }
+
+    @Then("Player does not earns Upper Section Bonus")
+    public void playerDoesNotEarnsUpperSectionBonus() {
+        assertFalse(p.getScoresheet().getUpperSectionBonus());
     }
 }

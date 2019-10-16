@@ -103,4 +103,24 @@ public class GameLogicStepDefs {
     public void roundBegins(int round) {
         assertEquals(round, g.getRound());
     }
+
+    @And("Player can score")
+    public void playerCanScore() throws AlreadyScoredThereException {
+        p.score(1);
+    }
+
+    @Then("Player may reroll the first and second die")
+    public void playerMayRerollTheFirstAndSecondDie() {
+        p.reroll(1, 2);
+    }
+
+    @When("Player ends the game")
+    public void playerEndsTheGame() {
+        g.stop();
+    }
+
+    @Then("Game is over")
+    public void gameIsOver() {
+        assertTrue(g.hasEnded());
+    }
 }

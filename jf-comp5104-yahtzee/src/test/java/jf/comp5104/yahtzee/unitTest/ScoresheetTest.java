@@ -133,21 +133,21 @@ public class ScoresheetTest {
 			assertEquals("got 50 points in that category", s.getScore(13), 50);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-			assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
+			assertEquals("Total of lower section: 50", s.getLowerTotal(), 50);
 			assertEquals("Total:", s.getTotal(), 50);
 			s.score(r, 13);
 			// Rolled 5 ones, scored them as Yahtzee,
 			assertEquals("got 50 points in that category", s.getScore(13), 50);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
-			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-			assertEquals("Total of lower section: 150", s.getLowerTotal(), 150);
-			assertEquals("Total:", s.getTotal(), 150);
+			assertEquals("Total of upper sections: 0", 0, s.getUpperTotal2());
+			assertEquals("Total of lower section: 150", 150, s.getLowerTotal());
+			assertEquals("Total:", 150, s.getTotal());
 			s.score(r, 13);
 			// Rolled 5 ones, scored them as Yahtzee,
 			assertEquals("got 50 points in that category", s.getScore(13), 50);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
 			assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-			assertEquals("Total of lower section: 0", s.getLowerTotal(), 250);
+			assertEquals("Total of lower section: 250", s.getLowerTotal(), 250);
 			assertEquals("Total:", s.getTotal(), 250);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,19 +159,19 @@ public class ScoresheetTest {
 		Roll r = new Roll(1, 1, 1, 1, 1);
 		s.score(r, 13);
 		// Rolled 5 ones, scored them as Yahtzee,
-		assertEquals("got 50 points in that category", s.getScore(13), 50);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 0", s.getLowerTotal(), 50);
-		assertEquals("Total:", s.getTotal(), 50);
+		assertEquals("got 50 points in that category", 50, s.getScore(13));
+		assertEquals("Total of upper sections: 0", 0, s.getUpperTotal1());
+		assertEquals("Total of upper sections: 0", 0, s.getUpperTotal2());
+		assertEquals("Total of lower section: 0", 50, s.getLowerTotal());
+		assertEquals("Total:", 50, s.getTotal());
 		r.set(6, 6, 6, 6, 6);
 		s.score(r, 13);
 		// Rolled 5 6, scored them as Yahtzee,
-		assertEquals("got 50 points in that category", s.getScore(13), 50);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal1(), 0);
-		assertEquals("Total of upper sections: 0", s.getUpperTotal2(), 0);
-		assertEquals("Total of lower section: 150", s.getLowerTotal(), 150);
-		assertEquals("Total:", s.getTotal(), 150);
+		assertEquals("got 50 points in that category", 50, s.getScore(13));
+		assertEquals("Total of upper sections: 0", 0, s.getUpperTotal1());
+		assertEquals("Total of upper sections: 0", 0, s.getUpperTotal2());
+		assertEquals("Total of lower section: 150", 150, s.getLowerTotal());
+		assertEquals("Total:", 150, s.getTotal());
 		r.set(1, 2, 3, 4, 5);
 		s.score(r, 13); // throw exception
 	}

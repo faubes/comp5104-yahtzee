@@ -14,7 +14,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	private String name;
 	private Map<Integer, Integer> sheet; // map from category to score
 
-	private boolean bonus;
+	private boolean upperSectionBonus;
 	private int yahtzees;
 	private int round;
 
@@ -108,12 +108,14 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	}
 
 	private void checkForBonus() {
-		setBonus(calculateTotalUpperSection() >= 63);
+		setUpperSectionBonus(calculateTotalUpperSection() >= 63);
 	}
 
-	private void setBonus(boolean b) {
-		bonus = b;
+	private void setUpperSectionBonus(boolean b) {
+		upperSectionBonus = b;
 	}
+
+	public boolean getUpperSectionBonus() { return upperSectionBonus; }
 
 	private int calculateTotalUpperSection() {
 		return sheet.entrySet().stream().filter(k -> k.getKey() >= 1 && k.getKey() <= 6).map(Map.Entry::getValue)
@@ -126,7 +128,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 
 	// with bonus, if applicable
 	public int getUpperTotal2() {
-		return calculateTotalUpperSection() + (bonus ? 35 : 0);
+		return calculateTotalUpperSection() + (upperSectionBonus ? 35 : 0);
 	}
 
 	public int getLowerTotal() {
@@ -194,7 +196,7 @@ public class Scoresheet implements Comparable<Scoresheet> {
 			if (i == 6) {
 				// print Top Totals and Bonus
 				formatter.format(" %1$-19s : %2$-15d |", "Top Sub-Total", getUpperTotal1());
-				formatter.format(" %1$-19s : %2$-15s |", "Top Bonus", bonus ? "35" : " ");
+				formatter.format(" %1$-19s : %2$-15s |", "Top Bonus", upperSectionBonus ? "35" : " ");
 				formatter.format(" %1$-19s : %2$-15d |", "Top Sub-Total", getUpperTotal2());
 				sb.append(Yahtzee.EOL);
 				sb.append(line);
@@ -218,4 +220,9 @@ public class Scoresheet implements Comparable<Scoresheet> {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public int getYahtzees() {
+		return yahtzees;
+    }
+
 }
